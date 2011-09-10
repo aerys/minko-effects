@@ -3,7 +3,7 @@ package aerys.minko.render.effect.normalMapping
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.data.LocalData;
+	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.StyleStack;
 	
 	import flash.utils.Dictionary;
@@ -34,10 +34,10 @@ package aerys.minko.render.effect.normalMapping
 			);
 		}
 		
-		public function getIllumination(direction 	: Object,
-										color		: Object,
-										specular	: Object,
-										shininess	: Object) : SValue
+		public function getIllumination(direction 		: Object,
+										diffuseColor	: Object,
+										specular		: Object,
+										shininess		: Object) : SValue
 		{
 			var lightVec	: SValue	= interpolate(getTangentSpaceLightVector(direction));
 			
@@ -48,14 +48,14 @@ package aerys.minko.render.effect.normalMapping
 			normal.normalize();
 			
 			var lamberFactor	: SValue	= saturate(lightVec.dotProduct3(normal));
-			var illumination	: SValue	= multiply(color, lamberFactor);
+			var illumination	: SValue	= multiply(diffuseColor, lamberFactor);
 			
 			var ref				: SValue	= getReflectedVector(lightVec, normal);
 			var halfVector		: SValue	= interpolate(getHalfVector(direction));
 			
 			shininess = power(max(dotProduct3(ref, halfVector), 0.0), shininess);
 			
-			illumination.increment(shininess.multiply(specular));
+			illumination.incrementBy(shininess.multiply(specular));
 			
 			return illumination;
 		}
