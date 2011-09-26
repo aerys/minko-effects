@@ -1,12 +1,7 @@
 package aerys.minko.render.effect.normalMapping
 {
-	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.scene.data.StyleStack;
-	
-	import flash.utils.Dictionary;
 	
 	public final class NormalMappingShaderPart extends ActionScriptShaderPart
 	{

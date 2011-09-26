@@ -2,15 +2,19 @@ package aerys.minko.render.effect.fog
 {
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.node.fog.Fog;
 
 	public final class FogShaderPart extends ActionScriptShaderPart
 	{
-		public function getFogColor(start		: Object,
-									distance	: Object,
-									color		: Object) : SValue
+		public function getFogFactor(start		: Object	= null,
+									 distance	: Object	= null) : SValue
 		{
-			return new SValue(new Fog(getNode(start), getNode(distance), getNode(color)));
+			start ||= float(0.);
+			distance ||= cameraFarClipping;
+			
+			var depth		: SValue	= multiply4x4(interpolate(vertexPosition), localToViewMatrix).z;
+			var fogFactor	: SValue	= subtract(depth, start);
+			
+			return saturate(fogFactor.divide(distance));
 		}
 	}
 }

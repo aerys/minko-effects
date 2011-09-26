@@ -4,6 +4,6 @@ package aerys.minko.render.effect.normalMapping
 
 	public final class NormalMappingStyle
 	{
-		public static const NORMAL_MAP			: int	= Style.getStyleId("normal normal map");
+		public static const NORMAL_MAP	: int	= Style.getStyleId("normal normal map");
 	}
 }
