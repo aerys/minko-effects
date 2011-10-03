@@ -24,8 +24,6 @@ package aerys.minko.render.effect.steepParallaxMapping
 		
 		private var _eyeDir					: SValue	= null;
 		private var _lightDir				: SValue	= null;
-		//private var _lightEyeSum			: SValue	= null;
-		//private var _halfVector				: SValue	= null;
 		
 		override protected function getOutputPosition() : SValue
 		{
@@ -39,27 +37,14 @@ package aerys.minko.render.effect.steepParallaxMapping
 				dotProduct3(eyeDir, vertexNormal)
 			);
 			
-			var worldLightDir 	: SValue 	= subtract(getStyleParameter(3, SteepParallaxMappingStyle.LIGHT_DIR), vertexPosition);
+			var worldLightDir 	: SValue 	= getStyleParameter(3, SteepParallaxMappingStyle.LIGHT_DIR);
 			
-			/*_lightDir = float3(
-				dotProduct3(eyeDir, vertexTangent),
-				dotProduct3(eyeDir, vertexBitangent),
-				dotProduct3(eyeDir, vertexNormal)
-			);*/
 			_lightDir = float3(
 				dotProduct3(worldLightDir, vertexTangent),
 				dotProduct3(worldLightDir, vertexBitangent),
 				dotProduct3(worldLightDir, vertexNormal)
 			);
 			var halfVector		: SValue 	= normalize(add(worldLightDir, copy(cameraDirection)));
-			/*
-			_lightEyeSum = halfVector;
-			
-			_halfVector = float3(
-				dotProduct3(halfVector, vertexTangent),
-				dotProduct3(halfVector, vertexBitangent),
-				dotProduct3(halfVector, vertexNormal)
-			);*/
 			
 			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
 				as uint;
@@ -95,10 +80,10 @@ package aerys.minko.render.effect.steepParallaxMapping
 				if (i == NSTEPS - 1)
 					height = 0;
 				
-				var bump : SValue = sampleTexture(SteepParallaxMappingStyle.BUMP_MAP, tmpUV,
-					Sampler.FILTER_LINEAR,
-					Sampler.MIPMAP_LINEAR,
-					Sampler.WRAPPING_CLAMP);							
+				var bump 	: SValue	= sampleTexture(SteepParallaxMappingStyle.BUMP_MAP, tmpUV,
+												 	 	Sampler.FILTER_LINEAR,
+														Sampler.MIPMAP_LINEAR,
+														Sampler.WRAPPING_CLAMP);							
 				var resultUV : SValue = multiply(tmpUV, ifGreaterEqual(bump, height), resultNotFound);
 				
 				resultNotFound = resultNotFound.multiply(ifLessThan(bump, height));
@@ -109,15 +94,15 @@ package aerys.minko.render.effect.steepParallaxMapping
 			}
 			
 			var diffuse				: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv,
-				Sampler.FILTER_LINEAR,
-				Sampler.MIPMAP_LINEAR,
-				Sampler.WRAPPING_CLAMP);
+																Sampler.FILTER_LINEAR,
+																Sampler.MIPMAP_LINEAR,
+																Sampler.WRAPPING_CLAMP);
 			
 			var tangentSpaceLight	: SValue	= normalize(interpolate(_lightDir));
 			var normal				: SValue 	= sampleTexture(SteepParallaxMappingStyle.NORMAL_MAP, uv,
-				Sampler.FILTER_LINEAR,
-				Sampler.MIPMAP_LINEAR,
-				Sampler.WRAPPING_CLAMP);
+																Sampler.FILTER_LINEAR,
+																Sampler.MIPMAP_LINEAR,
+																Sampler.WRAPPING_CLAMP);
 			
 			normal = normalize(subtract(normal.multiply(2.), 1.));
 			
@@ -125,11 +110,11 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var shininess			: SValue	= float(getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.));
 			
 			var ref					: SValue	= getReflectedVector(negate(tangentSpaceLight), normal);
-			var lamberFactor		: SValue	= saturate(tangentSpaceLight.dotProduct3(normal));
+			var lambert				: SValue	= saturate(tangentSpaceLight.dotProduct3(normal));
 			var spec				: SValue	= power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess).multiply(specular)
-				                                  .multiply(lamberFactor);
+				                                  .multiply(lambert);
 			
-			var illumination 		: SValue 	= multiply(diffuse, lamberFactor);
+			var illumination 		: SValue 	= multiply(diffuse, lambert);
 			
 			return illumination.add(spec);
 		}
