@@ -19,9 +19,9 @@ package aerys.minko.render.effect.steepParallaxMapping
 	{
 		private static const ANIMATION	: AnimationShaderPart	= new AnimationShaderPart();
 		
-		private static const NSTEPS		 	: uint		= 20;
-		private static const BUMPSCALE 		: Number	= .03;
-		
+		private static const NSTEPS		 		: uint		= 20;
+		private static const BUMPSCALE_DEFAULT	: Number 	= .03;
+
 		private var _lightDir				: SValue	= null;
 		private var _cameraPosition			: SValue 	= null;
 		
@@ -52,7 +52,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 		override protected function getOutputColor() : SValue
 		{
 			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
-
+			
 			var tangentSpaceEye	: SValue	= normalize(cameraLocalPosition.subtract(interpolate(vertexPosition)));
 			
 			 tangentSpaceEye = float3(
@@ -63,9 +63,10 @@ package aerys.minko.render.effect.steepParallaxMapping
 			
 			var uv				: SValue	= float(0.);						
 			
+			var bumpScale		: Number	= getStyleConstant(SteepParallaxMappingStyle.BUMP_SCALE, BUMPSCALE_DEFAULT) as Number;
 			var delta			: SValue	= multiply(float2(extract(tangentSpaceEye, Components.X),
 													   		  extract(tangentSpaceEye, Components.Y)),
-													   divide(BUMPSCALE,
+													   divide(bumpScale,
 															  multiply(extract(tangentSpaceEye, Components.Z), NSTEPS)));
 			
 			var tmpUV			: SValue	= interpolate(vertexUV);
@@ -126,6 +127,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 		{
 			var hash 			: String	= "steep_parallax_mapping";
 			
+			hash += "_bumpScale=" + getStyleConstant(SteepParallaxMappingStyle.BUMP_SCALE, BUMPSCALE_DEFAULT);
 			hash += "_lightDirection=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR);
 			hash += "_lightShininess=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.);
 			hash += "_lightSpecular=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.);
