@@ -37,14 +37,15 @@ package aerys.minko.render.effect.steepParallaxMapping
 				dotProduct3(eyeDir, vertexNormal)
 			);
 			
-			var worldLightDir 	: SValue 	= getStyleParameter(3, SteepParallaxMappingStyle.LIGHT_DIR);
+			
+			var lightDir 		: SValue 	= normalize(multiply3x4(copy(getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR)),
+				                                        worldToLocalMatrix));
 			
 			_lightDir = float3(
-				dotProduct3(worldLightDir, vertexTangent),
-				dotProduct3(worldLightDir, vertexBitangent),
-				dotProduct3(worldLightDir, vertexNormal)
+				dotProduct3(lightDir, vertexTangent),
+				dotProduct3(lightDir, vertexBitangent),
+				dotProduct3(lightDir, vertexNormal)
 			);
-			var halfVector		: SValue 	= normalize(add(worldLightDir, copy(cameraDirection)));
 			
 			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
 				as uint;
@@ -59,14 +60,16 @@ package aerys.minko.render.effect.steepParallaxMapping
 		
 		override protected function getOutputColor() : SValue
 		{
+			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
+			
 			var tangentSpaceEye	: SValue	= interpolate(_eyeDir);
 			
 			var uv				: SValue	= float(0.);						
 			
 			var delta			: SValue	= multiply(float2(extract(tangentSpaceEye, Components.X),
-				extract(tangentSpaceEye, Components.Y)),
-				divide(BUMPSCALE,
-					multiply(extract(tangentSpaceEye, Components.Z), NSTEPS)));
+													   		  extract(tangentSpaceEye, Components.Y)),
+													   divide(BUMPSCALE,
+															  multiply(extract(tangentSpaceEye, Components.Z), NSTEPS)));
 			
 			var tmpUV			: SValue	= interpolate(vertexUV);
 			
@@ -83,7 +86,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 				var bump 	: SValue	= sampleTexture(SteepParallaxMappingStyle.BUMP_MAP, tmpUV,
 												 	 	Sampler.FILTER_LINEAR,
 														Sampler.MIPMAP_LINEAR,
-														Sampler.WRAPPING_CLAMP);							
+														samplerWrapping);							
 				var resultUV : SValue = multiply(tmpUV, ifGreaterEqual(bump, height), resultNotFound);
 				
 				resultNotFound = resultNotFound.multiply(ifLessThan(bump, height));
@@ -96,13 +99,13 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var diffuse				: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv,
 																Sampler.FILTER_LINEAR,
 																Sampler.MIPMAP_LINEAR,
-																Sampler.WRAPPING_CLAMP);
+																samplerWrapping);
 			
 			var tangentSpaceLight	: SValue	= normalize(interpolate(_lightDir));
 			var normal				: SValue 	= sampleTexture(SteepParallaxMappingStyle.NORMAL_MAP, uv,
 																Sampler.FILTER_LINEAR,
 																Sampler.MIPMAP_LINEAR,
-																Sampler.WRAPPING_CLAMP);
+																samplerWrapping);
 			
 			normal = normalize(subtract(normal.multiply(2.), 1.));
 			
@@ -111,8 +114,9 @@ package aerys.minko.render.effect.steepParallaxMapping
 			
 			var ref					: SValue	= getReflectedVector(negate(tangentSpaceLight), normal);
 			var lambert				: SValue	= saturate(tangentSpaceLight.dotProduct3(normal));
-			var spec				: SValue	= power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess).multiply(specular)
-				                                  .multiply(lambert);
+			var spec				: SValue	= power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess)
+													.multiply(specular)
+				                                  	.multiply(lambert);
 			
 			var illumination 		: SValue 	= multiply(diffuse, lambert);
 			
@@ -128,6 +132,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			hash += "_lightDirection=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR);
 			hash += "_lightShininess=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.);
 			hash += "_lightSpecular=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.);
+			hash += "_wrapping=" + getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT);
 			
 			var diffuseStyle 	: Object 	= style.isSet(BasicStyle.DIFFUSE)
 				? style.get(BasicStyle.DIFFUSE)

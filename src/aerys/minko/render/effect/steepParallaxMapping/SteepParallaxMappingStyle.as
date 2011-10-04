@@ -9,5 +9,6 @@ package aerys.minko.render.effect.steepParallaxMapping
 		public static const LIGHT_DIR			: int	= Style.getStyleId("spm light direction");
 		public static const LIGHT_SHININESS		: int	= Style.getStyleId("spm light shininess");
 		public static const LIGHT_SPECULAR		: int	= Style.getStyleId("spm light specular");
+		public static const SAMPLER_WRAPPING	: int	= Style.getStyleId("spm texture sampler wrapping");
 	}
 }
