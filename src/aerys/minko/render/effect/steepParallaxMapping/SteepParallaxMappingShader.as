@@ -8,6 +8,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.leaf.Sampler;
+	import aerys.minko.scene.data.GlobalDirectionnalLightData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.animation.AnimationMethod;
@@ -29,8 +30,8 @@ package aerys.minko.render.effect.steepParallaxMapping
 		{
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
 			
-			var lightDir 		: SValue 	= normalize(multiply3x4(copy(getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR)),
-				                                        worldToLocalMatrix));
+			var lightDir			: SValue	= getWorldParameter(4, GlobalDirectionnalLightData, GlobalDirectionnalLightData.DIRECTION);
+			lightDir = normalize(multiply3x4(copy(lightDir), worldToLocalMatrix));
 			
 			_lightDir = float3(
 				dotProduct3(lightDir, vertexTangent),
