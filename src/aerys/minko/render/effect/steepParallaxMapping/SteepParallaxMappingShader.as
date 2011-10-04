@@ -20,23 +20,14 @@ package aerys.minko.render.effect.steepParallaxMapping
 		private static const ANIMATION	: AnimationShaderPart	= new AnimationShaderPart();
 		
 		private static const NSTEPS		 	: uint		= 20;
-		private static const BUMPSCALE 		: Number	= .05;
+		private static const BUMPSCALE 		: Number	= .03;
 		
-		private var _eyeDir					: SValue	= null;
 		private var _lightDir				: SValue	= null;
+		private var _cameraPosition			: SValue 	= null;
 		
 		override protected function getOutputPosition() : SValue
 		{
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
-			
-			var eyeDir			: SValue	= normalize(cameraLocalPosition.subtract(vertexPosition));
-			
-			_eyeDir = float3(
-				dotProduct3(eyeDir, vertexTangent),
-				dotProduct3(eyeDir, vertexBitangent),
-				dotProduct3(eyeDir, vertexNormal)
-			);
-			
 			
 			var lightDir 		: SValue 	= normalize(multiply3x4(copy(getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR)),
 				                                        worldToLocalMatrix));
@@ -61,8 +52,14 @@ package aerys.minko.render.effect.steepParallaxMapping
 		override protected function getOutputColor() : SValue
 		{
 			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
+
+			var tangentSpaceEye	: SValue	= normalize(cameraLocalPosition.subtract(interpolate(vertexPosition)));
 			
-			var tangentSpaceEye	: SValue	= interpolate(_eyeDir);
+			 tangentSpaceEye = float3(
+				dotProduct3(tangentSpaceEye, interpolate(vertexTangent)),
+				dotProduct3(tangentSpaceEye, cross(interpolate(vertexNormal), interpolate(vertexTangent))),
+				dotProduct3(tangentSpaceEye, interpolate(vertexNormal))
+			);
 			
 			var uv				: SValue	= float(0.);						
 			
