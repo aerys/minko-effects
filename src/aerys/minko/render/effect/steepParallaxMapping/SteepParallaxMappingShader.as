@@ -30,7 +30,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 		{
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
 			
-			var lightDir			: SValue	= getWorldParameter(4, GlobalDirectionnalLightData, GlobalDirectionnalLightData.DIRECTION);
+			var lightDir		: SValue	= getWorldParameter(4, GlobalDirectionnalLightData, GlobalDirectionnalLightData.DIRECTION);
 			lightDir = normalize(multiply3x4(copy(lightDir), worldToLocalMatrix));
 			
 			_lightDir = float3(
@@ -129,7 +129,6 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var hash 			: String	= "steep_parallax_mapping";
 			
 			hash += "_bumpScale=" + getStyleConstant(SteepParallaxMappingStyle.BUMP_SCALE, BUMPSCALE_DEFAULT);
-			hash += "_lightDirection=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_DIR);
 			hash += "_lightShininess=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.);
 			hash += "_lightSpecular=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.);
 			hash += "_wrapping=" + getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT);

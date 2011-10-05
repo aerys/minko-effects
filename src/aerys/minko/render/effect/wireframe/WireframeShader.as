@@ -24,7 +24,7 @@ package aerys.minko.render.effect.wireframe
 		
 		override protected function getOutputPosition() : SValue
 		{
-			_weight = (WIREFRAME.vertexWeight);
+			_weight = WIREFRAME.getVertexWeight(getStyleConstant(WireframeStyle.WIRE_THICKNESS_COEFF, 1000.) as Number);
 			
 			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
 				as uint;
@@ -42,7 +42,26 @@ package aerys.minko.render.effect.wireframe
 			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
 			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
 			
-			var diffuse 		: SValue	= isNaN(wireColor.x) ? super.getOutputColor() : float4(wireColor);
+			var diffuse 		: SValue	= isNaN(wireColor.x) ? null : float4(wireColor);
+			
+			if (!diffuse)
+			{
+				if (styleIsSet(BasicStyle.DIFFUSE))
+				{
+					var diffuseStyle	: Object 	= getStyleConstant(BasicStyle.DIFFUSE);
+					
+					if (diffuseStyle is uint || diffuseStyle is Vector4)
+						diffuse = copy(getStyleParameter(4, BasicStyle.DIFFUSE));
+					else if (diffuseStyle is Texture3DResource)
+						diffuse = sampleTexture(BasicStyle.DIFFUSE, interpolate(vertexUV));
+					else
+						throw new Error('Invalid BasicStyle.DIFFUSE value.');
+				}
+				else
+					diffuse = float4(interpolate(vertexRGBColor).rgb, 1.);
+				
+				diffuse.scaleBy(getStyleParameter(4, BasicStyle.DIFFUSE_MULTIPLIER,	0xffffffff));
+			}
 			
 			// the interpolated weight is a vector of dimension 3 containing
 			// values representing the distance of the fragment to each side
@@ -64,6 +83,7 @@ package aerys.minko.render.effect.wireframe
 			
 			hash += "_wireColor=" + (isNaN(wireColor.x) ? "diffuse" : wireColor);
 			hash += "_surfaceColor=" + surfaceColor;
+			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS_COEFF, 1000.);
 			
 			hash += super.getDataHash(style, transform, world);
 			

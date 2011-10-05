@@ -13,14 +13,14 @@ package aerys.minko.render.effect.wireframe
 
 	public class WireframeShaderPart extends ActionScriptShaderPart
 	{
-		private const LINE_THICKNESS_COEFF	: SValue	= float(1000.);
+		private const LINE_THICKNESS_COEFF	: Number	= 1000.;
 		
 		/**
 		 * The weight of the current vertex for the wireframe effect. 
 		 * @return 
 		 * 
 		 */
-		public function get vertexWeight() : SValue
+		public function getVertexWeight(wireThickness : Number) : SValue
 		{
 			var cameraDistance 	: SValue	= length(cameraPosition.subtract(vertexWorldPosition));
 				
@@ -33,7 +33,7 @@ package aerys.minko.render.effect.wireframe
 			// is done in the WireframeMeshModifer.
 			// It is then modified by its distance to the
 			// camera and the scale of the mesh.
-			return w.multiply(LINE_THICKNESS_COEFF)
+			return w.multiply(wireThickness)
 				    .divide(cameraDistance)
 				    .multiply(scale);;
 		}

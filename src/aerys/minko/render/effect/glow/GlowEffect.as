@@ -2,6 +2,7 @@ package aerys.minko.render.effect.glow
 {
 	import aerys.minko.render.effect.IEffect;
 	import aerys.minko.render.effect.IEffectPass;
+	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
 	import aerys.minko.render.effect.basic.BasicEffect;
 	import aerys.minko.render.renderer.RendererState;
@@ -12,7 +13,7 @@ package aerys.minko.render.effect.glow
 	
 	import flash.utils.Dictionary;
 	
-	public class GlowEffect implements IEffect
+	public class GlowEffect implements IRenderingEffect
 	{
 		private var _passes	: Vector.<IEffectPass>	= new Vector.<IEffectPass>();
 		
