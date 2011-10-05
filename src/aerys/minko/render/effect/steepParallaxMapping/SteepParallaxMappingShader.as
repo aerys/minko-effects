@@ -76,9 +76,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var resultNotFound	: SValue	= float(1.);
 			
 			for (var i : int = 0; i < NSTEPS; i++) 
-			{
-				height -= 1. / NSTEPS;
-				
+			{				
 				if (i == NSTEPS - 1)
 					height = 0;
 				
@@ -93,6 +91,8 @@ package aerys.minko.render.effect.steepParallaxMapping
 				uv.incrementBy(resultUV);
 				
 				tmpUV = tmpUV.subtract(delta);
+				
+				height -= 1. / NSTEPS;
 			}
 			
 			var diffuse				: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv,

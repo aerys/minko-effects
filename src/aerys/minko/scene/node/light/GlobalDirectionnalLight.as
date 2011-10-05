@@ -6,7 +6,7 @@ package aerys.minko.scene.node.light
 	import aerys.minko.scene.node.AbstractScene;
 	import aerys.minko.type.Factory;
 	import aerys.minko.type.math.ConstVector4;
-	import aerys.minko.type.math.Matrix3D;
+	import aerys.minko.type.math.Matrix4x4;
 	import aerys.minko.type.math.Vector4;
 	
 	public class GlobalDirectionnalLight extends AbstractScene
@@ -29,7 +29,7 @@ package aerys.minko.scene.node.light
 			var gdld	: GlobalDirectionnalLightData 	= GLOBAL_DIRLIGHT_DATA.create(true) as GlobalDirectionnalLightData;
 			
 			// compute world space direction
-			var worldMatrix		: Matrix3D	= transformData.world;
+			var worldMatrix		: Matrix4x4	= transformData.world;
 			var worldDirection	: Vector4	= worldMatrix.deltaTransformVector(_direction).normalize();
 			
 			gdld.reset();
