@@ -24,7 +24,11 @@ package aerys.minko.render.effect.wireframe
 		
 		override protected function getOutputPosition() : SValue
 		{
-			_weight = WIREFRAME.getVertexWeight(getStyleConstant(WireframeStyle.WIRE_THICKNESS_COEFF, 1000.) as Number);
+			var coeff			: Number	= getStyleConstant(WireframeStyle.WIRE_THICKNESS, 20.) as Number
+
+			coeff = 2000 - coeff * 50;
+				
+			_weight = WIREFRAME.getVertexWeight(coeff);
 			
 			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
 				as uint;
@@ -83,7 +87,7 @@ package aerys.minko.render.effect.wireframe
 			
 			hash += "_wireColor=" + (isNaN(wireColor.x) ? "diffuse" : wireColor);
 			hash += "_surfaceColor=" + surfaceColor;
-			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS_COEFF, 1000.);
+			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS, 1000.);
 			
 			hash += super.getDataHash(style, transform, world);
 			
