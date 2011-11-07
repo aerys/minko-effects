@@ -41,12 +41,20 @@ package aerys.minko.render.effect.wireframe
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
+		private function vector4FromARGB(argb : uint) : Vector4
+		{
+			return new Vector4((argb & 0x00ff0000) >> 16,
+				(argb & 0x0000ff00) >> 8,
+				argb & 0x000000ff,
+				(argb & 0xff000000) >> 24)
+		}
+		
 		override protected function getOutputColor() : SValue
 		{			
-			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
-			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
+			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
+			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0x00000000) as uint;
 			
-			var diffuse 		: SValue	= isNaN(wireColor.x) ? null : float4(wireColor);
+			var diffuse 		: SValue	= styleIsSet(WireframeStyle.WIRE_COLOR) ? null : float4(vector4FromARGB(wireColor));
 			
 			if (!diffuse)
 			{
@@ -73,7 +81,7 @@ package aerys.minko.render.effect.wireframe
 			var wireFactor		: SValue	= WIREFRAME.getWireFactor(interpolate(_weight));
 			
 			// the final color of the pixel is l * line_color + (1 - l) * surface_color
-			return mix(surfaceColor, diffuse, wireFactor);
+			return mix(vector4FromARGB(surfaceColor), diffuse, wireFactor);
 		}
 		
 		override public function getDataHash(style		: StyleData,
