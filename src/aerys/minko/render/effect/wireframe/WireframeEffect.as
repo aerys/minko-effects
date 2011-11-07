@@ -52,8 +52,11 @@ package aerys.minko.render.effect.wireframe
 			
 			var surfaceColor	: uint	= style.get(WireframeStyle.SURFACE_COLOR, 0x00000000) as uint;
 			
-			if (surfaceColor & 0xff000000 < 0xff000000)
+			trace(style.isSet(WireframeStyle.SURFACE_COLOR), surfaceColor, uint(surfaceColor & 0xff000000), 0xff000000);
+			
+			if (uint(surfaceColor & 0xff000000) < 0xff000000)
 			{
+				trace(surfaceColor);
 				state.depthTest	= CompareMode.ALWAYS;
 				state.blending =  style.get(BasicStyle.BLENDING, Blending.ADDITIVE) as uint;
 			}

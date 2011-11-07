@@ -43,10 +43,10 @@ package aerys.minko.render.effect.wireframe
 		
 		private function vector4FromARGB(argb : uint) : Vector4
 		{
-			return new Vector4((argb & 0x00ff0000) >> 16,
-				(argb & 0x0000ff00) >> 8,
-				argb & 0x000000ff,
-				(argb & 0xff000000) >> 24)
+			return new Vector4((uint(argb & 0x00ff0000) >> 16) / 0xff,
+				(uint(argb & 0x0000ff00) >> 8) / 0xff,
+				(uint(argb & 0x000000ff) / 0xff),
+				(uint(argb & 0xff000000) >> 24) / 0xff)
 		}
 		
 		override protected function getOutputColor() : SValue
@@ -90,10 +90,10 @@ package aerys.minko.render.effect.wireframe
 		{
 			var hash 			: String	= "wireframe";
 			
-			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
-			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
+			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
+			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0) as uint;
 			
-			hash += "_wireColor=" + (isNaN(wireColor.x) ? "diffuse" : wireColor);
+			hash += "_wireColor=" + (styleIsSet(WireframeStyle.WIRE_COLOR) ? "diffuse" : wireColor);
 			hash += "_surfaceColor=" + surfaceColor;
 			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS, 1000.);
 			
