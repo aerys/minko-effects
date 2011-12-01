@@ -3,10 +3,10 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.IPostProcessingEffect;
-	import aerys.minko.render.resource.Texture3DResource;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.render.resource.TextureResource;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	
 	import flash.utils.Dictionary;
 
@@ -16,13 +16,13 @@ package aerys.minko.render.effect.lightScattering
 		
 		private var _passes					: Vector.<IEffectPass>	= null;;
 		
-		private var _occludedSource			: Texture3DResource		= null;
+		private var _occludedSource			: TextureResource		= null;
 		private var _renderTarget 			: RenderTarget			= null;
 		
 		private var _nb_passes				: Number				= 0.;
 		private var _nb_samples				: Number				= 0.;
 		
-		public function LightScatteringPostProcessEffect(occludedSource	: Texture3DResource,
+		public function LightScatteringPostProcessEffect(occludedSource	: TextureResource,
 														 renderTarget	: RenderTarget		= null,
 														 renderQuality	: int				= LightScatteringStyle.LOW_QUALITY,
 														 nb_samples		: Number            = MAX_SAMPLES)

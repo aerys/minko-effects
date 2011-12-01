@@ -5,11 +5,11 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.Style;
 	import aerys.minko.render.effect.basic.BasicEffect;
-	import aerys.minko.render.resource.Texture3DResource;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.render.resource.TextureResource;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.ViewportData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	
 	import flash.utils.Dictionary;
 	
@@ -20,7 +20,7 @@ package aerys.minko.render.effect.lightScattering
 		private var _occludedTarget		: RenderTarget			= null;
 		private var _backgroundColor	: int					= 0;
 		
-		public function get occludedResource() : Texture3DResource
+		public function get occludedResource() : TextureResource
 		{
 			return _occludedTarget.textureResource;
 		}
