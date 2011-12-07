@@ -23,7 +23,7 @@ package aerys.minko.render.effect.lightScattering
 		
 		public function get occludedResource() : FlatTextureResource
 		{
-			return _occludedTarget.textureResource;
+			return FlatTextureResource(_occludedTarget.textureResource);
 		}
 		
 		public function get occludedTarget() : AbstractRenderTarget

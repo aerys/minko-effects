@@ -18,9 +18,9 @@ package aerys.minko.render.effect.vertexNormal
 		
 		override protected function getOutputPosition() : SValue
 		{
-			var animationMethod		: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED) as uint;
-			var maxInfluences		: uint		= getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0) as uint;
-			var numBones			: uint		= getStyleConstant(AnimationStyle.NUM_BONES, 0) as uint;
+			var animationMethod		: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
+			var maxInfluences		: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
+			var numBones			: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
 			var vertexPosition		: SValue	= ANIMATION.getVertexPosition(animationMethod, maxInfluences, numBones);
 			
 			_vertexNormal	= ANIMATION.getVertexNormal(animationMethod, maxInfluences, numBones);
