@@ -7,6 +7,7 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	
 	import flash.utils.Dictionary;
 
@@ -23,9 +24,9 @@ package aerys.minko.render.effect.lightScattering
 		private var _nb_samples				: Number				= 0.;
 		
 		public function LightScatteringPostProcessEffect(occludedSource	: FlatTextureResource,
-														 renderTarget	: AbstractRenderTarget		= null,
-														 renderQuality	: int				= LightScatteringStyle.LOW_QUALITY,
-														 nb_samples		: Number            = MAX_SAMPLES)
+														 renderTarget	: AbstractRenderTarget	= null,
+														 renderQuality	: int					= LightScatteringStyle.LOW_QUALITY,
+														 nb_samples		: Number				= MAX_SAMPLES)
 		{
 			_occludedSource = occludedSource;
 			_renderTarget = renderTarget;

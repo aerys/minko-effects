@@ -9,9 +9,9 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.leaf.Sampler;
 	import aerys.minko.scene.data.CameraData;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	import aerys.minko.type.log.DebugLevel;
 	import aerys.minko.type.math.Vector4;
 	

@@ -50,13 +50,14 @@ package aerys.minko.render.effect.wireframe
 			
 			state.triangleCulling = TriangleCulling.DISABLED;
 			
-			var surfaceColor	: Vector4	= style.get(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
+			var surfaceColor	: uint	= style.get(WireframeStyle.SURFACE_COLOR, 0x00000000) as uint;
 			
-			if (surfaceColor.w < 1.)
+			if (uint(surfaceColor & 0xff000000) < 0xff000000)
 			{
 				state.depthTest	= CompareMode.ALWAYS;
 				state.blending =  style.get(BasicStyle.BLENDING, Blending.ADDITIVE) as uint;
 			}
+			
 			return true;
 		}
 	}

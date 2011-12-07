@@ -39,12 +39,9 @@ package aerys.minko.render.effect.steepParallaxMapping
 				dotProduct3(lightDir, vertexNormal)
 			);
 			
-			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
-				as uint;
-			var maxInfluences	: uint		= getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0)
-				as uint;
-			var numBones		: uint		= getStyleConstant(AnimationStyle.NUM_BONES, 0)
-				as uint;
+			var animationMethod	: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
+			var maxInfluences	: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
+			var numBones		: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
 			var vertexPosition	: SValue	= ANIMATION.getVertexPosition(animationMethod, maxInfluences, numBones);
 			
 			return multiply4x4(vertexPosition, localToScreenMatrix);

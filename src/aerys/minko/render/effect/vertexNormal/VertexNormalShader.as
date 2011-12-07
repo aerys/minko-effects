@@ -12,7 +12,7 @@ package aerys.minko.render.effect.vertexNormal
 	
 	public class VertexNormalShader extends ActionScriptShader
 	{
-		private static const ANIMATION	: AnimationShaderPart	= new AnimationShaderPart();
+		private static const ANIMATION : AnimationShaderPart = new AnimationShaderPart();
 		
 		private var _vertexNormal	: SValue	= null;
 		

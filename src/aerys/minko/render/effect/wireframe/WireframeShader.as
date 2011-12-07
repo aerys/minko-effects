@@ -4,6 +4,7 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicShader;
 	import aerys.minko.render.effect.basic.BasicStyle;
+	import aerys.minko.render.effect.diffuse.DiffuseShaderPart;
 	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
@@ -18,6 +19,7 @@ package aerys.minko.render.effect.wireframe
 	public class WireframeShader extends ActionScriptShader
 	{
 		private static const ANIMATION	: AnimationShaderPart	= new AnimationShaderPart();
+		private static const DIFFUSE	: DiffuseShaderPart		= new DiffuseShaderPart();
 		private static const WIREFRAME	: WireframeShaderPart	= new WireframeShaderPart();
 		
 		private var _weight						: SValue 	= null;
@@ -30,41 +32,33 @@ package aerys.minko.render.effect.wireframe
 				
 			_weight = WIREFRAME.getVertexWeight(coeff);
 			
-			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED)
-				as uint;
-			var maxInfluences	: uint		= getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0)
-				as uint;
-			var numBones		: uint		= getStyleConstant(AnimationStyle.NUM_BONES, 0)
-				as uint;
+			var animationMethod	: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
+			var maxInfluences	: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
+			var numBones		: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
 			var vertexPosition	: SValue	= ANIMATION.getVertexPosition(animationMethod, maxInfluences, numBones);
 			
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
+		private function vector4FromARGB(argb : uint) : Vector4
+		{
+			return new Vector4((uint(argb & 0x00ff0000) >> 16) / 0xff,
+				(uint(argb & 0x0000ff00) >> 8) / 0xff,
+				(uint(argb & 0x000000ff) / 0xff),
+				(uint(argb & 0xff000000) >> 24) / 0xff)
+		}
+		
 		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{			
-			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
-			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
+			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
+			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0x00000000) as uint;
 			
-			var diffuse 		: SValue	= isNaN(wireColor.x) ? null : float4(wireColor);
+			var diffuse 		: SValue = styleIsSet(WireframeStyle.WIRE_COLOR) ? null : float4(vector4FromARGB(wireColor));
 			
 			if (!diffuse)
 			{
-				if (styleIsSet(BasicStyle.DIFFUSE))
-				{
-					var diffuseStyle	: Object 	= getStyleConstant(BasicStyle.DIFFUSE);
-					
-					if (diffuseStyle is uint || diffuseStyle is Vector4)
-						diffuse = copy(getStyleParameter(4, BasicStyle.DIFFUSE));
-					else if (diffuseStyle is FlatTextureResource)
-						diffuse = sampleTexture(BasicStyle.DIFFUSE, interpolate(vertexUV));
-					else
-						throw new Error('Invalid BasicStyle.DIFFUSE value.');
-				}
-				else
-					diffuse = float4(interpolate(vertexRGBColor).rgb, 1.);
-				
-				diffuse.scaleBy(getStyleParameter(4, BasicStyle.DIFFUSE_MULTIPLIER,	0xffffffff));
+				var diffuseStyle : Object = styleIsSet(BasicStyle.DIFFUSE) ? getStyleConstant(BasicStyle.DIFFUSE) : null;
+				DIFFUSE.getDiffuseColor(diffuseStyle);
 			}
 			
 			// the interpolated weight is a vector of dimension 3 containing
@@ -73,7 +67,7 @@ package aerys.minko.render.effect.wireframe
 			var wireFactor		: SValue	= WIREFRAME.getWireFactor(interpolate(_weight));
 			
 			// the final color of the pixel is l * line_color + (1 - l) * surface_color
-			return mix(surfaceColor, diffuse, wireFactor);
+			return mix(vector4FromARGB(surfaceColor), diffuse, wireFactor);
 		}
 		
 		override public function getDataHash(style		: StyleData,
@@ -82,29 +76,16 @@ package aerys.minko.render.effect.wireframe
 		{
 			var hash 			: String	= "wireframe";
 			
-			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
-			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
+			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
+			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0) as uint;
 			
-			hash += "_wireColor=" + (isNaN(wireColor.x) ? "diffuse" : wireColor);
+			hash += "_wireColor=" + (styleIsSet(WireframeStyle.WIRE_COLOR) ? "diffuse" : wireColor);
 			hash += "_surfaceColor=" + surfaceColor;
 			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS, 1000.);
 			
 			hash += super.getDataHash(style, transform, world);
 			
-			
-			var diffuseStyle 	: Object 	= style.isSet(BasicStyle.DIFFUSE)
-				? style.get(BasicStyle.DIFFUSE)
-				: null;
-			
-			if (diffuseStyle == null)
-				hash += '_colorFromVertex';
-			else if (diffuseStyle is uint || diffuseStyle is Vector4)
-				hash += '_colorFromConstant';
-			else if (diffuseStyle is FlatTextureResource)
-				hash += '_colorFromTexture';
-			else
-				throw new Error('Invalid BasicStyle.DIFFUSE value');
-			
+			hash += DIFFUSE.getDataHash(style, transform, world);
 			hash += ANIMATION.getDataHash(style, transform, world);				
 			
 			return hash;
