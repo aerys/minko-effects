@@ -28,7 +28,7 @@ package aerys.minko.render.effect.glow
 			return pos.multiply4x4(projectionMatrix);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{
 			var normal 	: SValue	= interpolate(vertexNormal);
 			var angle 	: SValue 	= negate(normal.dotProduct3(cameraLocalDirection));

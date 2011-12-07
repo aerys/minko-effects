@@ -108,8 +108,8 @@ package aerys.minko.scene.node.mesh.modifier
 			}
 			packedStream.invalidate();
 			
-			_vertexStreamList.pushVertexStream(new VertexStream(newVertices, packedStream.format, packedStream.dynamic));
-			_vertexStreamList.pushVertexStream(new VertexStream(weights, format, vertexStream.dynamic));
+			_vertexStreamList.pushVertexStream(new VertexStream(newVertices, packedStream.format, packedStream.isDynamic));
+			_vertexStreamList.pushVertexStream(new VertexStream(weights, format, vertexStream.isDynamic));
 		}
 	}
 }

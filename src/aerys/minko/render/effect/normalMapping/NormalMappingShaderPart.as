@@ -45,7 +45,7 @@ package aerys.minko.render.effect.normalMapping
 			var lamberFactor	: SValue	= saturate(lightVec.dotProduct3(normal));
 			var illumination	: SValue	= multiply(diffuseColor, lamberFactor);
 			
-			var ref				: SValue	= getReflectedVector(lightVec, normal);
+			var ref				: SValue	= reflect(lightVec, normal);
 			var halfVector		: SValue	= interpolate(getHalfVector(direction));
 			
 			shininess = power(max(dotProduct3(ref, halfVector), 0.0), shininess);

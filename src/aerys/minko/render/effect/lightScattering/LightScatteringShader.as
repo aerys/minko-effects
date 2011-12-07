@@ -1,6 +1,6 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
@@ -33,7 +33,7 @@ package aerys.minko.render.effect.lightScattering
 			return vertexClipspacePosition;
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{		
 			if (getStyleConstant(LightScatteringStyle.IS_LIGHT_SOURCE, false))
 				return _lightColor;

@@ -1,13 +1,13 @@
 package aerys.minko.render.effect.wireframe
 {
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
 	import aerys.minko.render.effect.animation.AnimationShaderPart;
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.resource.Texture3DResource;
+	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.operation.builtin.Multiply3x4;
@@ -36,7 +36,7 @@ package aerys.minko.render.effect.wireframe
 		
 		
 		public function WireframeEffect(priority		: Number		= 0,
-										renderTarget	: RenderTarget	= null)
+										renderTarget	: AbstractRenderTarget	= null)
 		{			
 			super(WIREFRAME_SHADER, priority, renderTarget);
 		}

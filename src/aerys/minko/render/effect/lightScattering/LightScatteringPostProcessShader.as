@@ -1,10 +1,10 @@
 package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.Minko;
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.Style;
 	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.resource.Texture3DResource;
+	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.leaf.Sampler;
@@ -29,13 +29,13 @@ package aerys.minko.render.effect.lightScattering
 		private var _nb_passes		: Number			= 0.;
 		private var _cur_passe		: Number			= 0.;
 
-		private var _occludedSource	: Texture3DResource	= null;
+		private var _occludedSource	: FlatTextureResource	= null;
 		private var _occludedId		: int				= 0;
 		
 		public function LightScatteringPostProcessShader(num_samples		: Number,
 									   				   	 nb_passes			: Number,
 									   				     cur_passe			: Number,
-									   				   	 occludedSource		: Texture3DResource,
+									   				   	 occludedSource		: FlatTextureResource,
 									   				   	 exposure			: Number,
 									   				   	 decay				: Number,
 									   				   	 weight				: Number,
@@ -61,7 +61,7 @@ package aerys.minko.render.effect.lightScattering
 			return vertexPosition;
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{
 			var lightPosition			: SValue	= copy(getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION));
 			var lighDirection 			: SValue 	= normalize(subtract(lightPosition, cameraPosition));

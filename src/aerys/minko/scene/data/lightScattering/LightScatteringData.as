@@ -1,12 +1,11 @@
 package aerys.minko.scene.data.lightScattering
 {
-	import aerys.minko.ns.minko;
-	import aerys.minko.type.math.Vector4;
-	
-	import flash.utils.Dictionary;
 	import aerys.minko.scene.data.IWorldData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.type.math.Vector4;
+	
+	import flash.utils.Dictionary;
 
 	public final class LightScatteringData implements IWorldData
 	{

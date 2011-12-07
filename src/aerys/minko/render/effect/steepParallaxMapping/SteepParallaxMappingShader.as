@@ -3,12 +3,12 @@ package aerys.minko.render.effect.steepParallaxMapping
 	import aerys.minko.render.effect.animation.AnimationShaderPart;
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.resource.Texture3DResource;
+	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.leaf.Sampler;
-	import aerys.minko.scene.data.GlobalDirectionnalLightData;
+	import aerys.minko.scene.data.GlobalDirectionalLightData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.animation.AnimationMethod;
@@ -30,7 +30,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 		{
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
 			
-			var lightDir		: SValue	= getWorldParameter(4, GlobalDirectionnalLightData, GlobalDirectionnalLightData.DIRECTION);
+			var lightDir		: SValue	= getWorldParameter(4, GlobalDirectionalLightData, GlobalDirectionalLightData.DIRECTION);
 			lightDir = normalize(multiply3x4(copy(lightDir), worldToLocalMatrix));
 			
 			_lightDir = float3(
@@ -50,7 +50,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{
 			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
 			
@@ -111,7 +111,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var specular			: SValue	= float(getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.));
 			var shininess			: SValue	= float(getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.));
 			
-			var ref					: SValue	= getReflectedVector(negate(tangentSpaceLight), normal);
+			var ref					: SValue	= reflect(negate(tangentSpaceLight), normal);
 			var lambert				: SValue	= saturate(tangentSpaceLight.dotProduct3(normal));
 			var spec				: SValue	= power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess)
 													.multiply(specular)
@@ -141,7 +141,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 				hash += '_colorFromVertex';
 			else if (diffuseStyle is uint || diffuseStyle is Vector4)
 				hash += '_colorFromConstant';
-			else if (diffuseStyle is Texture3DResource)
+			else if (diffuseStyle is FlatTextureResource)
 				hash += '_colorFromTexture';
 			else
 				throw new Error('Invalid BasicStyle.DIFFUSE value');

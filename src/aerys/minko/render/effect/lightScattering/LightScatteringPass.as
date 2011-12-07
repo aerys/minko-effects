@@ -1,6 +1,6 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
@@ -17,10 +17,10 @@ package aerys.minko.render.effect.lightScattering
 		private var _lightScatteringShader	: IShader		= null;
 		
 		private var _priority 				: Number		= 0;
-		private var _renderTarget			: RenderTarget	= null;
+		private var _renderTarget			: AbstractRenderTarget	= null;
 		
 		public function LightScatteringPass(priority		: Number,
-											renderTarget	: RenderTarget,
+											renderTarget	: AbstractRenderTarget,
 											lightColor		: int,
 											backgroundColor	: int)
 		{

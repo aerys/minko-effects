@@ -4,7 +4,7 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicShader;
 	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.resource.Texture3DResource;
+	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
@@ -41,7 +41,7 @@ package aerys.minko.render.effect.wireframe
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{			
 			var wireColor		: Vector4	= getStyleConstant(WireframeStyle.WIRE_COLOR, new Vector4(NaN, NaN, NaN)) as Vector4;
 			var surfaceColor	: Vector4	= getStyleConstant(WireframeStyle.SURFACE_COLOR, new Vector4(0., 0., 0., 0.)) as Vector4;
@@ -56,7 +56,7 @@ package aerys.minko.render.effect.wireframe
 					
 					if (diffuseStyle is uint || diffuseStyle is Vector4)
 						diffuse = copy(getStyleParameter(4, BasicStyle.DIFFUSE));
-					else if (diffuseStyle is Texture3DResource)
+					else if (diffuseStyle is FlatTextureResource)
 						diffuse = sampleTexture(BasicStyle.DIFFUSE, interpolate(vertexUV));
 					else
 						throw new Error('Invalid BasicStyle.DIFFUSE value.');
@@ -100,7 +100,7 @@ package aerys.minko.render.effect.wireframe
 				hash += '_colorFromVertex';
 			else if (diffuseStyle is uint || diffuseStyle is Vector4)
 				hash += '_colorFromConstant';
-			else if (diffuseStyle is Texture3DResource)
+			else if (diffuseStyle is FlatTextureResource)
 				hash += '_colorFromTexture';
 			else
 				throw new Error('Invalid BasicStyle.DIFFUSE value');

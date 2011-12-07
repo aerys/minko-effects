@@ -1,9 +1,9 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.resource.Texture3DResource;
+	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.ViewportData;
@@ -19,13 +19,13 @@ package aerys.minko.render.effect.lightScattering
 		private var _lightScatteringPostProcessShader	: LightScatteringPostProcessShader	= null;
 		
 		private var _priority 							: Number							= 0;
-		private var _renderTarget						: RenderTarget						= null;
+		private var _renderTarget						: AbstractRenderTarget						= null;
 		
 		public function LightScatteringPostProcessPass(num_samples			: Number,
 													   nb_passes			: Number,
 													   cur_passe			: Number,
-													   occludedSource		: Texture3DResource,
-													   renderTarget			: RenderTarget,
+													   occludedSource		: FlatTextureResource,
+													   renderTarget			: AbstractRenderTarget,
 													   priority				: Number,
 													   exposure				: Number,
 													   decay				: Number,

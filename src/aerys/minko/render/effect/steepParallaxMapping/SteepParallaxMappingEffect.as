@@ -1,6 +1,6 @@
 package aerys.minko.render.effect.steepParallaxMapping
 {
-	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
 	
@@ -9,7 +9,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 		private static const SPM_SHADER	: SteepParallaxMappingShader = new SteepParallaxMappingShader();
 		
 		public function SteepParallaxMappingEffect(priority		: Number		= 0,
-												   renderTarget	: RenderTarget	= null)
+												   renderTarget	: AbstractRenderTarget	= null)
 		{			
 			super(SPM_SHADER, priority, renderTarget);
 		}

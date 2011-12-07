@@ -28,7 +28,7 @@ package aerys.minko.render.effect.vertexNormal
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{
 			return divide(add(1., interpolate(_vertexNormal)), 2.);
 		}

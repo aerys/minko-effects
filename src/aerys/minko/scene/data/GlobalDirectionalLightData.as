@@ -4,7 +4,7 @@ package aerys.minko.scene.data
 	
 	import flash.utils.Dictionary;
 	
-	public class GlobalDirectionnalLightData implements IWorldData
+	public class GlobalDirectionalLightData implements IWorldData
 	{
 		public static const DIRECTION	: String 	= "direction";
 		
@@ -14,7 +14,7 @@ package aerys.minko.scene.data
 		
 		public function set direction(value : Vector4) : void { _direction = value; }
 		
-		public function GlobalDirectionnalLightData()
+		public function GlobalDirectionalLightData()
 		{
 		}
 		
