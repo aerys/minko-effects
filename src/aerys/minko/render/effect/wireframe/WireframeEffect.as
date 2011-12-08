@@ -3,7 +3,7 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
-	import aerys.minko.render.effect.animation.AnimationShaderPart;
+	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
