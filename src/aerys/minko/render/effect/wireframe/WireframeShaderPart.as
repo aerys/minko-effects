@@ -24,7 +24,7 @@ package aerys.minko.render.effect.wireframe
 		{
 			var cameraDistance 	: SValue	= length(cameraPosition.subtract(vertexWorldPosition));
 				
-			var scale 			: SValue 	= length(multiply3x4(float3(1., 0., 0.), copy(localToWorldMatrix)));
+			var scale 			: SValue 	= length(multiply3x4(float3(1., 0., 0.), localToWorldMatrix));
 			
 			var w 				: SValue	= new SValue(new Attribute(VertexComponent.create(["w1", "w2", "w3"], VertexComponentType.FLOAT_3)));
 			

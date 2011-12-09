@@ -63,13 +63,13 @@ package aerys.minko.render.effect.lightScattering
 		
 		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
 		{
-			var lightPosition			: SValue	= copy(getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION));
+			var lightPosition			: SValue	= getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION);
 			var lighDirection 			: SValue 	= normalize(subtract(lightPosition, cameraPosition));
 			var textureVertexPos		: SValue	= saturate(interpolate(vertexUV));
 			var textureLightPos			: SValue	= multiply4x4(lightPosition, getTransformParameter(16, TransformData.LOCAL_TO_UV));		
 			var vertexToLightDelta		: SValue	= subtract(divide(textureLightPos.xy, textureLightPos.w), textureVertexPos);
 			
-			var dotProductResult		: SValue	= dotProduct3(lighDirection, normalize(copy(cameraDirection)));
+			var dotProductResult		: SValue	= dotProduct3(lighDirection, normalize(cameraDirection));
 			var colorMultiplier 		: SValue 	= subtract(dotProductResult, 0.5);
 			
 			var initialColor			: SValue	= sampleTexture(_occludedId, textureVertexPos, Sampler.FILTER_LINEAR, Sampler.MIPMAP_LINEAR, Sampler.WRAPPING_CLAMP);

@@ -31,7 +31,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
 			
 			var lightDir		: SValue	= getWorldParameter(4, GlobalDirectionalLightData, GlobalDirectionalLightData.DIRECTION);
-			lightDir = normalize(multiply3x4(copy(lightDir), worldToLocalMatrix));
+			lightDir = normalize(multiply3x4(lightDir, worldToLocalMatrix));
 			
 			_lightDir = float3(
 				dotProduct3(lightDir, vertexTangent),
