@@ -3,13 +3,8 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
-	import aerys.minko.render.shader.node.leaf.Attribute;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.stream.format.VertexComponent;
 	import aerys.minko.type.stream.format.VertexComponentType;
-	
-	import flash.utils.Dictionary;
 
 	public class WireframeShaderPart extends ActionScriptShaderPart
 	{
@@ -26,7 +21,7 @@ package aerys.minko.render.effect.wireframe
 				
 			var scale 			: SValue 	= length(multiply3x4(float3(1., 0., 0.), localToWorldMatrix));
 			
-			var w 				: SValue	= new SValue(new Attribute(VertexComponent.create(["w1", "w2", "w3"], VertexComponentType.FLOAT_3)));
+			var w 				: SValue	= getVertexAttribute(VertexComponent.create(["w1", "w2", "w3"], VertexComponentType.FLOAT_3));
 			
 			// original weight is the distance from the vertex to the opposite
 			// side of the triangle, due to the abscence of geometry shader, this

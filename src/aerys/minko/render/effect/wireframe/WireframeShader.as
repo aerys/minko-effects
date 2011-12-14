@@ -55,10 +55,10 @@ package aerys.minko.render.effect.wireframe
 			
 			var diffuse 		: SValue = styleIsSet(WireframeStyle.WIRE_COLOR) ? null : float4(vector4FromARGB(wireColor));
 			
-			if (!diffuse)
+			if (diffuse == null)
 			{
 				var diffuseStyle : Object = styleIsSet(BasicStyle.DIFFUSE) ? getStyleConstant(BasicStyle.DIFFUSE) : null;
-				DIFFUSE.getDiffuseColor(diffuseStyle);
+				diffuse = DIFFUSE.getDiffuseColor(diffuseStyle);
 			}
 			
 			// the interpolated weight is a vector of dimension 3 containing
