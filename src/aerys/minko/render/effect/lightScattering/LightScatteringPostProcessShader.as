@@ -61,7 +61,7 @@ package aerys.minko.render.effect.lightScattering
 			return vertexPosition;
 		}
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{
 			var lightPosition			: SValue	= getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION);
 			var lighDirection 			: SValue 	= normalize(subtract(lightPosition, cameraPosition));

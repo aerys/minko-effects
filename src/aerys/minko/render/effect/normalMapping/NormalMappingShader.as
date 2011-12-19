@@ -7,9 +7,9 @@ package aerys.minko.render.effect.normalMapping
 	{
 		private static const NORMAL_MAPPING	: NormalMappingShaderPart	= new NormalMappingShaderPart();
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{
-			var diffuse 		: SValue 	= super.getOutputColor(kills);
+			var diffuse 		: SValue 	= super.getOutputColor();
 			var illumination	: SValue	= NORMAL_MAPPING.getIllumination(cameraLocalDirection,
 																			 float4(1., 1., 1., 1.),
 																			 0.8,

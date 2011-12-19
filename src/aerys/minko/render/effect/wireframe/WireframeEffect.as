@@ -1,9 +1,8 @@
 package aerys.minko.render.effect.wireframe
 {
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IRenderingEffect;
 	import aerys.minko.render.effect.SinglePassEffect;
-	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
+	import aerys.minko.render.effect.SinglePassRenderingEffect;
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
@@ -11,6 +10,8 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
 	import aerys.minko.render.shader.node.operation.builtin.Multiply3x4;
+	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.animation.AnimationMethod;
@@ -30,7 +31,7 @@ package aerys.minko.render.effect.wireframe
 	 *     - original article: http://cgg-journal.com/2008-2/06/index.html
 	 *     - minimole implementation: https://github.com/lidev/minimole-core/tree/master/com/li/minimole/materials
 	 */
-	public class WireframeEffect extends SinglePassEffect implements IRenderingEffect
+	public class WireframeEffect extends SinglePassRenderingEffect
 	{
 		private static const WIREFRAME_SHADER	: WireframeShader	= new WireframeShader();
 		

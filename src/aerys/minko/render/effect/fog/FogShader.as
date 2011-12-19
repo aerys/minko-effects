@@ -11,12 +11,12 @@ package aerys.minko.render.effect.fog
 	{
 		private static const FOG	: FogShaderPart	= new FogShaderPart();
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{
 			var fogColor 	: SValue	= getStyleParameter(4, FogStyle.COLOR);
 			var fogFactor	: SValue	= FOG.getFogFactor();
 			
-			return mix(getOutputColor(kills), fogColor, fogFactor);
+			return mix(super.getOutputColor(), fogColor, fogFactor);
 		}
 		
 		override public function getDataHash(styleData		: StyleData,

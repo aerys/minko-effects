@@ -33,7 +33,7 @@ package aerys.minko.render.effect.lightScattering
 			return vertexClipspacePosition;
 		}
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{		
 			if (getStyleConstant(LightScatteringStyle.IS_LIGHT_SOURCE, false))
 				return _lightColor;

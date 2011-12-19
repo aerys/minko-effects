@@ -47,7 +47,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{
 			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
 			
@@ -81,9 +81,9 @@ package aerys.minko.render.effect.steepParallaxMapping
 												 	 	Sampler.FILTER_LINEAR,
 														Sampler.MIPMAP_LINEAR,
 														samplerWrapping);							
-				var resultUV : SValue = multiply(tmpUV, ifGreaterEqual(bump, height), resultNotFound);
+				var resultUV : SValue = multiply(tmpUV, greaterEqual(bump, height), resultNotFound);
 				
-				resultNotFound = resultNotFound.multiply(ifLessThan(bump, height));
+				resultNotFound = resultNotFound.multiply(lessThan(bump, height));
 				
 				uv.incrementBy(resultUV);
 				

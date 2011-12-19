@@ -1,5 +1,6 @@
 package aerys.minko.render.effect.wireframe
 {
+	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
@@ -10,6 +11,11 @@ package aerys.minko.render.effect.wireframe
 	{
 		private const LINE_THICKNESS_COEFF	: Number	= 1000.;
 		
+		public function WireframeShaderPart(main : ActionScriptShader)
+		{
+			super(main);
+		}
+		
 		/**
 		 * The weight of the current vertex for the wireframe effect. 
 		 * @return 
@@ -18,9 +24,7 @@ package aerys.minko.render.effect.wireframe
 		public function getVertexWeight(wireThickness : Number) : SValue
 		{
 			var cameraDistance 	: SValue	= length(cameraPosition.subtract(vertexWorldPosition));
-				
 			var scale 			: SValue 	= length(multiply3x4(float3(1., 0., 0.), localToWorldMatrix));
-			
 			var w 				: SValue	= getVertexAttribute(VertexComponent.create(["w1", "w2", "w3"], VertexComponentType.FLOAT_3));
 			
 			// original weight is the distance from the vertex to the opposite
@@ -30,19 +34,21 @@ package aerys.minko.render.effect.wireframe
 			// camera and the scale of the mesh.
 			return w.multiply(wireThickness)
 				    .divide(cameraDistance)
-				    .multiply(scale);;
+				    .multiply(scale);
 		}
 		
 		public function getWireFactor(interpolatedVertexWeights : SValue) : SValue
 		{
 			// only the shortest distance is used to compute the color of the fragment
-			var d 					: SValue 	= min(extract(interpolatedVertexWeights, Components.R),
-													  extract(interpolatedVertexWeights, Components.G),
-													  extract(interpolatedVertexWeights, Components.B));
+			var d 	: SValue 	= min(
+				interpolatedVertexWeights.x,
+				interpolatedVertexWeights.y,
+				interpolatedVertexWeights.z
+			);
 			
 			// e is strictly negative and closer to 0 the closer the fragment
 			// is to a side of the triangle
-			var e 					: SValue 	= multiply(-2., d.pow(6));
+			var e : SValue 	= multiply(-2., d.pow(6));
 			
 			// the result is between 1 (when e = 0, i.e. when the fragment is on a 
 			// triangle edge and rapidly approaches 0 when e decreases (when

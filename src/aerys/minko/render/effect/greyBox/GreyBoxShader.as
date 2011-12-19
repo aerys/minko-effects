@@ -36,7 +36,7 @@ package aerys.minko.render.effect.greyBox
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		override protected function getOutputColor() : SValue
 		{
 			return interpolate(_vertexColor);
 		}
