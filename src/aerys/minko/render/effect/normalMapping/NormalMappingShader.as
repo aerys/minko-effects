@@ -5,12 +5,19 @@ package aerys.minko.render.effect.normalMapping
 	
 	public class NormalMappingShader extends BasicShader
 	{
-		private static const NORMAL_MAPPING	: NormalMappingShaderPart	= new NormalMappingShaderPart();
+		private var _normalMappingPart	: NormalMappingShaderPart	= null;
+		
+		public function NormalMappingShader()
+		{
+			super();
+			
+			_normalMappingPart = new NormalMappingShaderPart(main);
+		}
 		
 		override protected function getOutputColor() : SValue
 		{
 			var diffuse 		: SValue 	= super.getOutputColor();
-			var illumination	: SValue	= NORMAL_MAPPING.getIllumination(cameraLocalDirection,
+			var illumination	: SValue	= _normalMappingPart.getIllumination(cameraLocalDirection,
 																			 float4(1., 1., 1., 1.),
 																			 0.8,
 																			 64);

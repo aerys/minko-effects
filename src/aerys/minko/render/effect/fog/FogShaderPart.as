@@ -1,10 +1,16 @@
 package aerys.minko.render.effect.fog
 {
+	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
 
 	public final class FogShaderPart extends ActionScriptShaderPart
 	{
+		public function FogShaderPart(main : ActionScriptShader)
+		{
+			super(main);
+		}
+		
 		public function getFogFactor(start		: Object	= null,
 									 distance	: Object	= null) : SValue
 		{

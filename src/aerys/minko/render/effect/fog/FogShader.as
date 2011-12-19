@@ -9,12 +9,17 @@ package aerys.minko.render.effect.fog
 	
 	public class FogShader extends BasicShader
 	{
-		private static const FOG	: FogShaderPart	= new FogShaderPart();
+		private var _fogPart	: FogShaderPart	= null;
+		
+		public function FogShader()
+		{
+			_fogPart = new FogShaderPart(this);
+		}
 		
 		override protected function getOutputColor() : SValue
 		{
 			var fogColor 	: SValue	= getStyleParameter(4, FogStyle.COLOR);
-			var fogFactor	: SValue	= FOG.getFogFactor();
+			var fogFactor	: SValue	= _fogPart.getFogFactor();
 			
 			return mix(super.getOutputColor(), fogColor, fogFactor);
 		}
@@ -24,7 +29,7 @@ package aerys.minko.render.effect.fog
 											 worldData		: Dictionary) : String
 		{
 			return super.getDataHash(styleData, transformData, worldData)
-				   + FOG.getDataHash(styleData, transformData, worldData);
+				   + _fogPart.getDataHash(styleData, transformData, worldData);
 		}
 	}
 }

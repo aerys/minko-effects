@@ -18,7 +18,6 @@ package aerys.minko.render.effect.wireframe
 
 	public class WireframeShader extends ActionScriptShader
 	{
-
 		private var _diffusePart	: DiffuseShaderPart		= null;
 		private var _animationPart	: AnimationShaderPart	= null;
 		private var _wireframePart	: WireframeShaderPart	= null;
@@ -27,8 +26,8 @@ package aerys.minko.render.effect.wireframe
 		
 		public function WireframeShader()
 		{
-			_diffusePart = new DiffuseShaderPart();
-			_animationPart = new AnimationShaderPart();
+			_diffusePart = new DiffuseShaderPart(this);
+			_animationPart = new AnimationShaderPart(this);
 			_wireframePart = new WireframeShaderPart(this);
 		}
 		

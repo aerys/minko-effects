@@ -12,19 +12,26 @@ package aerys.minko.render.effect.greyBox
 	
 	public class GreyBoxShader extends ActionScriptShader
 	{
-		private static const ANIMATION		: AnimationShaderPart	= new AnimationShaderPart();
-		
 		private const COLOR			: SValue	= float4(.5, .5, .5, 1.);
 		
-		private var _vertexColor	: SValue	= null;
+		private var _animationPart	: AnimationShaderPart	= null;
+		
+		private var _vertexColor	: SValue				= null;
+		
+		public function GreyBoxShader()
+		{
+			super();
+			
+			_animationPart = new AnimationShaderPart(this);
+		}
 		
 		override protected function getOutputPosition() : SValue
 		{
 			var animationMethod	: uint		= getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED) as uint;
 			var maxInfluences	: uint		= getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0) as uint;
 			var numBones		: uint		= getStyleConstant(AnimationStyle.NUM_BONES, 0) as uint;
-			var vertexPosition	: SValue	= ANIMATION.getVertexPosition(animationMethod, maxInfluences, numBones);
-			var vertexNormal	: SValue	= ANIMATION.getVertexNormal(animationMethod, maxInfluences, numBones);
+			var vertexPosition	: SValue	= _animationPart.getVertexPosition(animationMethod, maxInfluences, numBones);
+			var vertexNormal	: SValue	= _animationPart.getVertexNormal(animationMethod, maxInfluences, numBones);
 			var lightDir		: SValue	= subtract(cameraLocalPosition, vertexPosition);
 			
 			lightDir.normalize();
@@ -45,7 +52,7 @@ package aerys.minko.render.effect.greyBox
 											 transformData	: TransformData,
 											 worldData		: Dictionary) : String
 		{
-			return "debug" + ANIMATION.getDataHash(styleData, transformData, worldData);
+			return "debug" + _animationPart.getDataHash(styleData, transformData, worldData);
 		}
 	}
 }

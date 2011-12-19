@@ -1,10 +1,16 @@
 package aerys.minko.render.effect.normalMapping
 {
+	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.ActionScriptShaderPart;
 	import aerys.minko.render.shader.SValue;
 	
 	public final class NormalMappingShaderPart extends ActionScriptShaderPart
 	{
+		public function NormalMappingShaderPart(main : ActionScriptShader)
+		{
+			super(main);
+		}
+		
 		private function getTangentSpaceLightVector(lightDirection : Object) : SValue
 		{
 			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);

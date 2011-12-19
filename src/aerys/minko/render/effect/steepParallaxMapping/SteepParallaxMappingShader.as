@@ -18,13 +18,20 @@ package aerys.minko.render.effect.steepParallaxMapping
 
 	public class SteepParallaxMappingShader extends ActionScriptShader
 	{
-		private static const ANIMATION	: AnimationShaderPart	= new AnimationShaderPart();
-		
 		private static const NSTEPS		 		: uint		= 20;
 		private static const BUMPSCALE_DEFAULT	: Number 	= .03;
+		
+		private var _animationPart			: AnimationShaderPart	= null;
 
-		private var _lightDir				: SValue	= null;
-		private var _cameraPosition			: SValue 	= null;
+		private var _lightDir				: SValue				= null;
+		private var _cameraPosition			: SValue 				= null;
+		
+		public function SteepParallaxMappingShader()
+		{
+			super();
+			
+			_animationPart = new AnimationShaderPart(main);
+		}
 		
 		override protected function getOutputPosition() : SValue
 		{
@@ -42,7 +49,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			var animationMethod	: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
 			var maxInfluences	: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
 			var numBones		: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
-			var vertexPosition	: SValue	= ANIMATION.getVertexPosition(animationMethod, maxInfluences, numBones);
+			var vertexPosition	: SValue	= _animationPart.getVertexPosition(animationMethod, maxInfluences, numBones);
 			
 			return multiply4x4(vertexPosition, localToScreenMatrix);
 		}
@@ -143,7 +150,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 			else
 				throw new Error('Invalid BasicStyle.DIFFUSE value');
 			
-			hash += ANIMATION.getDataHash(style, transform, world);				
+			hash += _animationPart.getDataHash(style, transform, world);				
 			
 			return hash;
 		}
