@@ -47,8 +47,8 @@ package aerys.minko.render.effect.lightScattering
 				var finalTarget	: AbstractRenderTarget	= worldData[ViewportData].backBufferRenderTarget;
 				
 				_passes		= new Vector.<IEffectPass>();
-				_passes[0]	= new LightScatteringPass(1 + 100, _occludedTarget, worldData[LightScatteringData].color, _backgroundColor);
-				_passes[1]  = new BasicEffect(2 + 100, finalTarget);
+				_passes[0]	= new LightScatteringPass(1, _occludedTarget, worldData[LightScatteringData].color, _backgroundColor);
+				_passes[1]  = new BasicEffect(0, finalTarget);
 			}
 
 			return _passes;	

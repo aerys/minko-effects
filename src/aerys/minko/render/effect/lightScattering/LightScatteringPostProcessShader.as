@@ -1,17 +1,19 @@
 package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.Minko;
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.Style;
+	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.resource.texture.FlatTextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.leaf.Sampler;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.CameraData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.type.enum.Blending;
 	import aerys.minko.type.log.DebugLevel;
 	import aerys.minko.type.math.Vector4;
 	
@@ -100,6 +102,7 @@ package aerys.minko.render.effect.lightScattering
 												 worldData	: Dictionary) : void
 		{
 			style.set(_occludedId, _occludedSource);
+//			style.set(BasicStyle.BLENDING, Blending.NORMAL);
 			
 			super.fillRenderState(state, style, transform, worldData);
 		}
