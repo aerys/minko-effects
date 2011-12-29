@@ -102,7 +102,6 @@ package aerys.minko.render.effect.lightScattering
 												 worldData	: Dictionary) : void
 		{
 			style.set(_occludedId, _occludedSource);
-//			style.set(BasicStyle.BLENDING, Blending.NORMAL);
 			
 			super.fillRenderState(state, style, transform, worldData);
 		}

@@ -1,10 +1,10 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.shader.IShader;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.enum.Blending;
@@ -34,11 +34,15 @@ package aerys.minko.render.effect.lightScattering
 										transformData	: TransformData,
 										worldData 		: Dictionary) : Boolean
 		{
-			styleData.set(BasicStyle.BLENDING, Blending.NORMAL);
-			
+			var blending : uint = styleData.get(BasicStyle.BLENDING, Blending.NORMAL) as uint;
+		
 			state.depthTest = CompareMode.LESS;
 			state.priority = _priority;
 			state.renderTarget = _renderTarget;
+			state.blending = blending;
+			
+			if (blending != Blending.NORMAL)
+				state.priority -= 0.5;
 			
 			_lightScatteringShader.fillRenderState(state, styleData, transformData, worldData);
 			

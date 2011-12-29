@@ -1,10 +1,9 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.IPostProcessingEffect;
 	import aerys.minko.render.resource.texture.FlatTextureResource;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
