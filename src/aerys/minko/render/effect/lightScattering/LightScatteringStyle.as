@@ -6,7 +6,7 @@ package aerys.minko.render.effect.lightScattering
 	{
 		public static const IS_LIGHT_SOURCE	: int 	= Style.getStyleId("godrays light source");
 		public static const IS_SKY			: int 	= Style.getStyleId("godrays sky");
-		public static const HAS_COLOR		: int	= Style.getStyleId("godrays color");
+		public static const IS_TRANSPARENT	: int	= Style.getStyleId("godrays transparency");
 		public static const	LOW_QUALITY		: int	= 1;
 		public static const	MEDIUM_QUALITY	: int	= 2;
 		public static const	HIGH_QUALITY	: int	= 3;

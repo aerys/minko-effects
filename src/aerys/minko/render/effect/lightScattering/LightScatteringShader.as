@@ -67,14 +67,11 @@ package aerys.minko.render.effect.lightScattering
 				else
 					diffuse = float4(interpolate(vertexRGBColor).rgb, 1.);
 				
-				if (getStyleConstant(LightScatteringStyle.HAS_COLOR, false))
+				if (getStyleConstant(LightScatteringStyle.IS_TRANSPARENT, false))
 				{
-					var color 	: int 		= getStyleConstant(LightScatteringStyle.HAS_COLOR, false) as int;
+//					var color 	: int 		= getStyleConstant(LightScatteringStyle.HAS_COLOR, false) as int;
 					
-					return float4(((color >> 16) & 0xff) / 255.,
-						((color >> 8) & 0xff) / 255.,
-						(color & 0xff) / 255.,
-						diffuse.a);
+					return float4(diffuse.rgba);
 				}
 				else
 					return float4(0., 0., 0., diffuse.a);
@@ -91,7 +88,7 @@ package aerys.minko.render.effect.lightScattering
 				hash += "_lightSource";
 			if (styleData.get(LightScatteringStyle.IS_SKY, false))
 				hash += "_sky";
-			if (styleData.get(LightScatteringStyle.HAS_COLOR, false))
+			if (styleData.get(LightScatteringStyle.IS_TRANSPARENT, false))
 				hash += "_color";
 			
 			var diffuseStyle 	: Object 	= styleData.isSet(BasicStyle.DIFFUSE)
