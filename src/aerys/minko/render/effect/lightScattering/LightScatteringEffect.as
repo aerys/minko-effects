@@ -2,9 +2,10 @@ package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.IRenderingEffect;
+	import aerys.minko.render.effect.SinglePassRenderingEffect;
 	import aerys.minko.render.effect.Style;
-	import aerys.minko.render.effect.basic.BasicEffect;
-	import aerys.minko.render.resource.texture.FlatTextureResource;
+	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.target.TextureRenderTarget;
 	import aerys.minko.scene.data.StyleData;
@@ -21,9 +22,9 @@ package aerys.minko.render.effect.lightScattering
 		private var _occludedTarget		: TextureRenderTarget	= null;
 		private var _backgroundColor	: int					= 0;
 		
-		public function get occludedResource() : FlatTextureResource
+		public function get occludedResource() : TextureResource
 		{
-			return FlatTextureResource(_occludedTarget.textureResource);
+			return TextureResource(_occludedTarget.textureResource);
 		}
 		
 		public function get occludedTarget() : AbstractRenderTarget
@@ -48,7 +49,7 @@ package aerys.minko.render.effect.lightScattering
 				
 				_passes		= new Vector.<IEffectPass>();
 				_passes[0]	= new LightScatteringPass(1 + 100, _occludedTarget, worldData[LightScatteringData].color, _backgroundColor);
-				_passes[1]  = new BasicEffect(2 + 100, finalTarget);
+				_passes[1]  = new SinglePassRenderingEffect(new BasicShader(), 2 + 100, finalTarget);
 			}
 
 			return _passes;	

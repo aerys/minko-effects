@@ -43,7 +43,7 @@ package aerys.minko.scene.node.lightScattering
 		{
 			var lsd		: LightScatteringData 	= LIGHT_SCATTERING_DATA.create(true) as LightScatteringData;
 			
-			transformData.world.transformVector(ConstVector4.ZERO, lsd.position);
+			transformData.localToWorld.transformVector(ConstVector4.ZERO, lsd.position);
 			lsd.color = _color;
 			lsd.density = _density;
 			lsd.exposure = _exposure;

@@ -1,13 +1,13 @@
 package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.Minko;
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.Style;
 	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.resource.texture.FlatTextureResource;
+	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.leaf.Sampler;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.CameraData;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
@@ -29,13 +29,13 @@ package aerys.minko.render.effect.lightScattering
 		private var _nb_passes		: Number			= 0.;
 		private var _cur_passe		: Number			= 0.;
 
-		private var _occludedSource	: FlatTextureResource	= null;
+		private var _occludedSource	: TextureResource	= null;
 		private var _occludedId		: int				= 0;
 		
 		public function LightScatteringPostProcessShader(num_samples		: Number,
 									   				   	 nb_passes			: Number,
 									   				     cur_passe			: Number,
-									   				   	 occludedSource		: FlatTextureResource,
+									   				   	 occludedSource		: TextureResource,
 									   				   	 exposure			: Number,
 									   				   	 decay				: Number,
 									   				   	 weight				: Number,
@@ -66,7 +66,7 @@ package aerys.minko.render.effect.lightScattering
 			var lightPosition			: SValue	= getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION);
 			var lighDirection 			: SValue 	= normalize(subtract(lightPosition, cameraPosition));
 			var textureVertexPos		: SValue	= saturate(interpolate(vertexUV));
-			var textureLightPos			: SValue	= multiply4x4(lightPosition, getTransformParameter(16, TransformData.LOCAL_TO_UV));		
+			var textureLightPos			: SValue	= multiply4x4(lightPosition, getWorldParameter(16, CameraData, CameraData.LOCAL_TO_UV));		
 			var vertexToLightDelta		: SValue	= subtract(divide(textureLightPos.xy, textureLightPos.w), textureVertexPos);
 			
 			var dotProductResult		: SValue	= dotProduct3(lighDirection, normalize(cameraDirection));

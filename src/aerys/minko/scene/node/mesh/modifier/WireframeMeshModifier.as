@@ -4,6 +4,7 @@ package aerys.minko.scene.node.mesh.modifier
 	import aerys.minko.scene.node.mesh.IMesh;
 	import aerys.minko.type.math.Vector4;
 	import aerys.minko.type.stream.IVertexStream;
+	import aerys.minko.type.stream.StreamUsage;
 	import aerys.minko.type.stream.VertexStream;
 	import aerys.minko.type.stream.VertexStreamList;
 	import aerys.minko.type.stream.format.VertexComponent;
@@ -33,7 +34,11 @@ package aerys.minko.scene.node.mesh.modifier
 		private function addVerticeWeights(target : IMesh) : void
 		{
 			var originalStream	: IVertexStream	= target.vertexStream;
-			var packedStream	: VertexStream	= VertexStream.extractSubStream(originalStream, originalStream.format);
+			var packedStream	: VertexStream	= VertexStream.extractSubStream(
+				originalStream,
+				StreamUsage.READ,
+				originalStream.format
+			);
 			
 			_indexStream		= target.indexStream.clone();
 			_vertexStreamList	= new VertexStreamList();
@@ -108,8 +113,13 @@ package aerys.minko.scene.node.mesh.modifier
 			}
 			packedStream.invalidate();
 			
-			_vertexStreamList.pushVertexStream(new VertexStream(newVertices, packedStream.format, packedStream.isDynamic));
-			_vertexStreamList.pushVertexStream(new VertexStream(weights, format, vertexStream.isDynamic));
+			_vertexStreamList.pushVertexStream(
+				new VertexStream(StreamUsage.STATIC, packedStream.format, newVertices)
+			);
+			
+			_vertexStreamList.pushVertexStream(
+				new VertexStream(StreamUsage.STATIC, format, weights)
+			);
 		}
 	}
 }

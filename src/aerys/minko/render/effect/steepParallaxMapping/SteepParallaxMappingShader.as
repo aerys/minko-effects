@@ -3,7 +3,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
 	import aerys.minko.render.effect.animation.AnimationStyle;
 	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.resource.texture.FlatTextureResource;
+	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
 	import aerys.minko.render.shader.SValue;
 	import aerys.minko.render.shader.node.Components;
@@ -145,7 +145,7 @@ package aerys.minko.render.effect.steepParallaxMapping
 				hash += '_colorFromVertex';
 			else if (diffuseStyle is uint || diffuseStyle is Vector4)
 				hash += '_colorFromConstant';
-			else if (diffuseStyle is FlatTextureResource)
+			else if (diffuseStyle is TextureResource)
 				hash += '_colorFromTexture';
 			else
 				throw new Error('Invalid BasicStyle.DIFFUSE value');

@@ -29,7 +29,7 @@ package aerys.minko.scene.node.light
 			var gdld	: GlobalDirectionalLightData 	= GLOBAL_DIRLIGHT_DATA.create(true) as GlobalDirectionalLightData;
 			
 			// compute world space direction
-			var worldMatrix		: Matrix4x4	= transformData.world;
+			var worldMatrix		: Matrix4x4	= transformData.localToWorld;
 			var worldDirection	: Vector4	= worldMatrix.deltaTransformVector(_direction).normalize();
 			
 			gdld.reset();

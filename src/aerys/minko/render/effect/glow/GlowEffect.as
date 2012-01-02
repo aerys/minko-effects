@@ -1,15 +1,11 @@
 package aerys.minko.render.effect.glow
 {
-	import aerys.minko.render.effect.IEffect;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.IRenderingEffect;
-	import aerys.minko.render.effect.SinglePassEffect;
-	import aerys.minko.render.effect.basic.BasicEffect;
-	import aerys.minko.render.renderer.RendererState;
+	import aerys.minko.render.effect.SinglePassRenderingEffect;
+	import aerys.minko.render.effect.basic.BasicShader;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.type.enum.Blending;
-	import aerys.minko.type.enum.TriangleCulling;
 	
 	import flash.utils.Dictionary;
 	
@@ -33,7 +29,7 @@ package aerys.minko.render.effect.glow
 									alpha	: Number	= 1.) : void
 		{
 			_passes[0] = new GlowPass(blur, red, green, blue, alpha);
-			_passes[1] = new BasicEffect();
+			_passes[1] = new SinglePassRenderingEffect(new BasicShader());
 		}
 		
 		public function getPasses(styleData		: StyleData,
