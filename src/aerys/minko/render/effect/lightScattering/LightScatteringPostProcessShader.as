@@ -2,6 +2,7 @@ package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.Minko;
 	import aerys.minko.render.effect.Style;
+	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.ActionScriptShader;
@@ -12,6 +13,7 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.type.enum.Blending;
 	import aerys.minko.type.log.DebugLevel;
 	import aerys.minko.type.math.Vector4;
 	

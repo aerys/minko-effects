@@ -1,10 +1,9 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.render.effect.IEffectPass;
 	import aerys.minko.render.effect.IPostProcessingEffect;
 	import aerys.minko.render.resource.texture.TextureResource;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
@@ -18,7 +17,7 @@ package aerys.minko.render.effect.lightScattering
 		private var _passes					: Vector.<IEffectPass>	= null;;
 		
 		private var _occludedSource			: TextureResource		= null;
-		private var _renderTarget 			: AbstractRenderTarget			= null;
+		private var _renderTarget 			: AbstractRenderTarget	= null;
 		
 		private var _nb_passes				: Number				= 0.;
 		private var _nb_samples				: Number				= 0.;
@@ -55,17 +54,19 @@ package aerys.minko.render.effect.lightScattering
 				_passes		= new Vector.<IEffectPass>();
 				for (var i : Number = 0.; i < _nb_passes; ++i)
 				{
-					_passes[i] = new LightScatteringPostProcessPass(_nb_samples,
-																	_nb_passes,
-																	i,
-																  	_occludedSource,
-																	_renderTarget,
-																	-i - 1 - 100,
-																	worldData[LightScatteringData].exposure,
-																	worldData[LightScatteringData].decay,
-																	worldData[LightScatteringData].weight,
-																	worldData[LightScatteringData].density,
-																	worldData[LightScatteringData].position);								
+					_passes[i] = new LightScatteringPostProcessPass(
+						_nb_samples,
+						_nb_passes,
+						i,
+						_occludedSource,
+						_renderTarget,
+						-i - 1 - 100,
+						worldData[LightScatteringData].exposure,
+						worldData[LightScatteringData].decay,
+						worldData[LightScatteringData].weight,
+						worldData[LightScatteringData].density,
+						worldData[LightScatteringData].position
+					);								
 				}
 			}
 			
