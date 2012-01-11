@@ -8,7 +8,7 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.scene.data.ViewportData;
 	import aerys.minko.type.enum.Blending;
-	import aerys.minko.type.enum.CompareMode;
+	import aerys.minko.type.enum.DepthTest;
 	import aerys.minko.type.enum.TriangleCulling;
 	import aerys.minko.type.math.Vector4;
 	
@@ -51,7 +51,7 @@ package aerys.minko.render.effect.lightScattering
 										transformData 	: TransformData,
 										worldData 		: Dictionary) : Boolean
 		{
-			state.depthTest			= CompareMode.ALWAYS;
+			state.depthTest			= DepthTest.ALWAYS;
 			state.blending			= Blending.ADDITIVE;
 			state.triangleCulling	= TriangleCulling.DISABLED;
 			state.priority			= _priority;

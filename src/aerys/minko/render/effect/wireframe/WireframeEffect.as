@@ -1,13 +1,12 @@
 package aerys.minko.render.effect.wireframe
 {
 	import aerys.minko.render.effect.SinglePassRenderingEffect;
-	import aerys.minko.render.effect.basic.BasicStyle;
 	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.target.AbstractRenderTarget;
 	import aerys.minko.scene.data.StyleData;
 	import aerys.minko.scene.data.TransformData;
 	import aerys.minko.type.enum.Blending;
-	import aerys.minko.type.enum.CompareMode;
+	import aerys.minko.type.enum.DepthTest;
 	import aerys.minko.type.enum.TriangleCulling;
 	
 	import flash.utils.Dictionary;
@@ -45,8 +44,8 @@ package aerys.minko.render.effect.wireframe
 			
 			if (uint(surfaceColor & 0xff000000) < 0xff000000)
 			{
-				state.depthTest	= CompareMode.ALWAYS;
-				state.blending =  style.get(BasicStyle.BLENDING, Blending.ADDITIVE) as uint;
+				state.depthTest	= DepthTest.ALWAYS;
+				state.blending =  Blending.ADDITIVE;
 			}
 			
 			return true;
