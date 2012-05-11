@@ -46,7 +46,7 @@ package aerys.minko.render.effect.wireframe
 			// only the shortest distance is used to compute the color of the fragment
 			var d 	: SFloat 	= min(
 				interpolatedVertexWeights.x,
-				min (
+				min(
 					interpolatedVertexWeights.y,
 					interpolatedVertexWeights.z
 				)
