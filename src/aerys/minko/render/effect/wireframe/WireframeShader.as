@@ -1,47 +1,50 @@
 package aerys.minko.render.effect.wireframe
 {
-	import aerys.minko.render.effect.animation.AnimationStyle;
-	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.shader.ActionScriptShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
-	import aerys.minko.render.shader.parts.diffuse.DiffuseShaderPart;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.type.animation.AnimationMethod;
+	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.shader.SFloat;
+	import aerys.minko.render.shader.Shader;
+	import aerys.minko.render.shader.ShaderSettings;
+	import aerys.minko.render.shader.part.DiffuseShaderPart;
+	import aerys.minko.render.shader.part.animation.VertexAnimationShaderPart;
+	import aerys.minko.type.enum.Blending;
+	import aerys.minko.type.enum.TriangleCulling;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
 
-	public class WireframeShader extends ActionScriptShader
+	public class WireframeShader extends BasicShader
 	{
-		private var _diffusePart	: DiffuseShaderPart		= null;
-		private var _animationPart	: AnimationShaderPart	= null;
-		private var _wireframePart	: WireframeShaderPart	= null;
+		private var _diffusePart	: DiffuseShaderPart			= null;
+		private var _animationPart	: VertexAnimationShaderPart	= null;
+		private var _wireframePart	: WireframeShaderPart		= null;
 		
-		private var _weight			: SValue 	= null;
+		private var _weight			: SFloat 	= null;
 		
 		public function WireframeShader()
 		{
 			_diffusePart = new DiffuseShaderPart(this);
-			_animationPart = new AnimationShaderPart(this);
+			_animationPart = new VertexAnimationShaderPart(this);
 			_wireframePart = new WireframeShaderPart(this);
 		}
 		
-		override protected function getOutputPosition() : SValue
+		override protected function initializeSettings(settings : ShaderSettings) : void
 		{
-			var coeff			: Number	= getStyleConstant(WireframeStyle.WIRE_THICKNESS, 20.) as Number
+			super.initializeSettings(settings);
+			
+			settings.depthWriteEnabled = false;
+			settings.triangleCulling = TriangleCulling.NONE;
+			settings.blending = Blending.ADDITIVE;
+		}
+		
+		override protected function getVertexPosition() : SFloat
+		{
+			var coeff	: Number	= meshBindings.getConstant(Wireframe.WIRE_THICKNESS, 20.);
 
 			coeff = 2000 - coeff * 50;
 				
 			_weight = _wireframePart.getVertexWeight(coeff);
 			
-			var animationMethod	: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
-			var maxInfluences	: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
-			var numBones		: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
-			var vertexPosition	: SValue	= _animationPart.getVertexPosition(animationMethod, maxInfluences, numBones);
-			
-			return multiply4x4(vertexPosition, localToScreenMatrix);
+			return super.getVertexPosition();
 		}
 		
 		private function vector4FromARGB(argb : uint) : Vector4
@@ -54,28 +57,26 @@ package aerys.minko.render.effect.wireframe
 			);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getPixelColor() : SFloat
 		{			
-			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
-			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0x00000000) as uint;
+			var wireColor : uint	= meshBindings.getConstant(
+				Wireframe.WIRE_COLOR, 0x000000ff
+			);
+			var surfaceColor : uint	= meshBindings.getConstant(
+				Wireframe.SURFACE_COLOR, 0x00000000
+			);
 			
-			var diffuse 		: SValue = styleIsSet(WireframeStyle.WIRE_COLOR)
-										   ? rgba(wireColor)
-										   : null;
+			var diffuse	: SFloat = meshBindings.propertyExists(Wireframe.WIRE_COLOR)
+				? rgba(wireColor)
+				: null;
 			
 			if (diffuse == null)
-			{
-				var diffuseStyle : Object = styleIsSet(BasicStyle.DIFFUSE)
-											? getStyleConstant(BasicStyle.DIFFUSE)
-											: null;
-				
-				diffuse = _diffusePart.getDiffuseColor(diffuseStyle);
-			}
+				diffuse = _diffusePart.getDiffuse();
 			
 			// the interpolated weight is a vector of dimension 3 containing
 			// values representing the distance of the fragment to each side
 			// of the triangle
-			var wireFactor		: SValue	= _wireframePart.getWireFactor(interpolate(_weight));
+			var wireFactor		: SFloat	= _wireframePart.getWireFactor(interpolate(_weight));
 			
 			// the final color of the pixel is l * line_color + (1 - l) * surface_color
 			diffuse = mix(rgba(surfaceColor), diffuse, wireFactor);
@@ -83,25 +84,6 @@ package aerys.minko.render.effect.wireframe
 //			kill(multiply(diffuse.a.lessThan(.05), -1));
 			
 			return diffuse;
-		}
-		
-		override public function getDataHash(style		: StyleData,
-											 transform	: TransformData,
-											 world		: Dictionary) : String
-		{
-			var hash 			: String	= super.getDataHash(style, transform, world);
-			
-			var wireColor		: uint	= getStyleConstant(WireframeStyle.WIRE_COLOR, 0) as uint;
-			var surfaceColor	: uint	= getStyleConstant(WireframeStyle.SURFACE_COLOR, 0) as uint;
-			
-			hash += _diffusePart.getDataHash(style, transform, world);
-			hash += _animationPart.getDataHash(style, transform, world);
-			
-			hash += "_wireColor=" + (styleIsSet(WireframeStyle.WIRE_COLOR) ? "diffuse" : wireColor);
-			hash += "_surfaceColor=" + surfaceColor;
-			hash += "_wireThicknessCoeff=" + getStyleConstant(WireframeStyle.WIRE_THICKNESS, 1000.);
-			
-			return hash;
 		}
 	}
 }

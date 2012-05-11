@@ -1,109 +1,117 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.Minko;
-	import aerys.minko.render.effect.Style;
-	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.renderer.RendererState;
 	import aerys.minko.render.resource.texture.TextureResource;
-	import aerys.minko.render.shader.ActionScriptShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.node.leaf.Sampler;
-	import aerys.minko.render.target.AbstractRenderTarget;
-	import aerys.minko.scene.data.CameraData;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.render.shader.SFloat;
+	import aerys.minko.render.shader.Shader;
+	import aerys.minko.render.shader.ShaderSettings;
+	import aerys.minko.render.shader.part.PostProcessingShaderPart;
 	import aerys.minko.scene.data.lightScattering.LightScatteringData;
 	import aerys.minko.type.enum.Blending;
-	import aerys.minko.type.log.DebugLevel;
+	import aerys.minko.type.enum.DepthTest;
+	import aerys.minko.type.enum.SamplerFiltering;
+	import aerys.minko.type.enum.SamplerMipMapping;
+	import aerys.minko.type.enum.SamplerWrapping;
+	import aerys.minko.type.enum.TriangleCulling;
 	import aerys.minko.type.math.Vector4;
 	
 	import flash.utils.Dictionary;
 	
-	public class LightScatteringPostProcessShader extends ActionScriptShader
+	public class LightScatteringPostProcessShader extends Shader
 	{
-		private var _num_samples	: Number			= 0.;
-
-		private var _exposure 		: Number			= 0.;
-		private var _decay			: Number			= 0.;
-		private var _weight			: Number			= 0.;
-		private var _density		: Number			= 0.;
-		private var _lightPos		: SValue			= null;
-		private var _nb_passes		: Number			= 0.;
-		private var _cur_passe		: Number			= 0.;
-
-		private var _occludedSource	: TextureResource	= null;
-		private var _occludedId		: int				= 0;
+		private var _postProcessing	: PostProcessingShaderPart	= null;
 		
-		public function LightScatteringPostProcessShader(num_samples		: Number,
-									   				   	 nb_passes			: Number,
-									   				     cur_passe			: Number,
-									   				   	 occludedSource		: TextureResource,
-									   				   	 exposure			: Number,
-									   				   	 decay				: Number,
-									   				   	 weight				: Number,
-									   				   	 density			: Number,
-													     lightPos			: Vector4)
+		private var _numSamples		: Number					= 0.;
+		private var _nbPasses		: Number					= 0.;
+		private var _curPass		: Number					= 0.;
+		private var _occludedSource	: TextureResource			= null;
+		
+		public function LightScatteringPostProcessShader(numSamples		: Number,
+									   				   	 nbPasses		: Number,
+									   				     curPass		: Number,
+									   				   	 occlusionMap	: TextureResource)
 		{
-			_exposure = exposure;
-			_decay = decay;
-			_weight = weight;
-			_density = density;
-			_lightPos = float4(lightPos.x, lightPos.y, lightPos.z, 1.);
-		
-			_nb_passes = nb_passes;
-			_cur_passe = cur_passe;
-			_num_samples = num_samples;
+			_nbPasses = nbPasses;
+			_curPass = curPass;
+			_numSamples = numSamples;
+			_occludedSource = occlusionMap;
 			
-			_occludedSource = occludedSource;
-			_occludedId	= Style.getStyleId('Occluded Intermediate Texture');
+			_postProcessing = new PostProcessingShaderPart(this);
 		}
 		
-		override protected function getOutputPosition() : SValue
+		override protected function initializeSettings(settings:ShaderSettings):void
 		{
-			return vertexPosition;
+			super.initializeSettings(settings);
+			
+			settings.depthTest			= DepthTest.ALWAYS;
+			settings.blending			= Blending.ADDITIVE;
+			settings.triangleCulling	= TriangleCulling.NONE;
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getVertexPosition() : SFloat
 		{
-			var lightPosition			: SValue	= getWorldParameter(4, LightScatteringData, LightScatteringData.POSITION);
-			var lighDirection 			: SValue 	= normalize(subtract(lightPosition, cameraPosition));
-			var textureVertexPos		: SValue	= saturate(interpolate(vertexUV));
-			var textureLightPos			: SValue	= multiply4x4(lightPosition, getWorldParameter(16, CameraData, CameraData.LOCAL_TO_UV));		
-			var vertexToLightDelta		: SValue	= subtract(divide(textureLightPos.xy, textureLightPos.w), textureVertexPos);
+			return _postProcessing.vertexPosition;
+		}
+		
+		private function localToUV(value : SFloat) : SFloat
+		{
+			return divide(add(localToScreen(value), 1), 2);
+		}
+		
+		override protected function getPixelColor() : SFloat
+		{
+			var lightPosition		: SFloat	= sceneBindings.getParameter(LightScattering.SOURCE_POSITION, 4);
+			var lighDirection 		: SFloat 	= normalize(subtract(lightPosition, cameraPosition));
+			var textureVertexPos	: SFloat	= saturate(interpolate(vertexUV));
+			var textureLightPos		: SFloat	= localToUV(lightPosition);		
+			var vertexToLightDelta	: SFloat	= subtract(divide(textureLightPos.xy, textureLightPos.w), textureVertexPos);
 			
-			var dotProductResult		: SValue	= dotProduct3(lighDirection, normalize(cameraDirection));
-			var colorMultiplier 		: SValue 	= subtract(dotProductResult, 0.5);
+			var cameraDirection		: SFloat	= normalize(subtract(cameraWorldLookAt, cameraWorldPosition));
+			var dotProductResult	: SFloat	= dotProduct3(lighDirection, normalize(cameraDirection));
+			var colorMultiplier 	: SFloat 	= subtract(dotProductResult, 0.5);
 			
-			var initialColor			: SValue	= sampleTexture(_occludedId, textureVertexPos, Sampler.FILTER_LINEAR, Sampler.MIPMAP_LINEAR, Sampler.WRAPPING_CLAMP);
-			var illumDecay				: Number	= 1.;
+			var occlusionMap		: SFloat	= getTexture(
+				_occludedSource,
+				SamplerFiltering.LINEAR,
+				SamplerMipMapping.LINEAR,
+				SamplerWrapping.CLAMP
+			);
+			var initialColor		: SFloat	= sampleTexture(occlusionMap, textureVertexPos);
+			var illumDecay			: SFloat	= float(1.);
 
-			var sampleColor 			: SValue	= null;
+			var sampleColor 		: SFloat	= null;
 			
-			vertexToLightDelta = multiply(vertexToLightDelta, _density / _num_samples);
-			textureVertexPos = add(textureVertexPos, multiply(divide(vertexToLightDelta, _nb_passes), _cur_passe));
+			// light scattering source values
+			var sourceCensity		: SFloat	= sceneBindings.getParameter(
+				LightScattering.SOURCE_DENSITY, 1
+			);
+			var sourceWeight		: SFloat	= sceneBindings.getParameter(
+				LightScattering.SOURCE_WEIGHT, 1
+			);
+			var sourceDecay			: SFloat	= sceneBindings.getParameter(
+				LightScattering.SOURCE_DECAY, 1
+			);
+			var sourceExposure		: SFloat	= sceneBindings.getParameter(
+				LightScattering.SOURCE_EXPOSURE, 1
+			);
+			
+			vertexToLightDelta = multiply(vertexToLightDelta, divide(sourceCensity, _numSamples));
+			textureVertexPos = add(textureVertexPos, multiply(divide(vertexToLightDelta, _nbPasses), _curPass));
 
-			for (var i : int = 0; i < _num_samples; ++i)
+			for (var i : int = 0; i < _numSamples; ++i)
 			{
 				textureVertexPos = add(textureVertexPos, vertexToLightDelta);
-				sampleColor = sampleTexture(_occludedId, textureVertexPos, Sampler.FILTER_LINEAR, Sampler.MIPMAP_LINEAR, Sampler.WRAPPING_CLAMP);
-				sampleColor = multiply(sampleColor, _weight * illumDecay);
+				sampleColor = sampleTexture(occlusionMap, textureVertexPos);
+				sampleColor = multiply(sampleColor, sourceWeight, illumDecay);
 
 				initialColor = add(initialColor, sampleColor);
 
-				illumDecay *= _decay;
+				illumDecay.scaleBy(sourceDecay);
 			}
 			
-			return float4(multiply(initialColor.rgb, _exposure, colorMultiplier), 1.);
-		}
-
-		override public function fillRenderState(state		: RendererState, 
-												 style		: StyleData, 
-												 transform	: TransformData, 
-												 worldData	: Dictionary) : void
-		{
-			style.set(_occludedId, _occludedSource);
-			
-			super.fillRenderState(state, style, transform, worldData);
+			return float4(
+				multiply(initialColor.rgb, sourceExposure, colorMultiplier),
+				1.
+			);
 		}
 	}
 }

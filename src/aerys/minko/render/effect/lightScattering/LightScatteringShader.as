@@ -1,170 +1,68 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.resource.texture.TextureResource;
-	import aerys.minko.render.shader.ActionScriptShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
-	import aerys.minko.render.shader.parts.diffuse.DiffuseShaderPart;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.type.math.Vector4;
+	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.shader.SFloat;
+	import aerys.minko.render.shader.ShaderSettings;
+	import aerys.minko.render.shader.part.DiffuseShaderPart;
+	import aerys.minko.render.shader.part.animation.VertexAnimationShaderPart;
 	
-	import flash.utils.Dictionary;
-	
-	public class LightScatteringShader extends ActionScriptShader
+	public class LightScatteringShader extends BasicShader
 	{
-		private var _animationShaderPart	: AnimationShaderPart	= null;
-		private var _diffuseShaderPart		: DiffuseShaderPart		= null;
+		private var _animation			: VertexAnimationShaderPart	= null;
+		private var _diffuse			: DiffuseShaderPart			= null;
 
-		private var _lightColor				: SValue				= null;
-		private var _backgroundColor		: SValue				= null;
+		private var _occlusionMap		: RenderTarget				= null;
 		
-		public function LightScatteringShader(lightColor		: int,
-											  backgroundColor	: int)
+		public function LightScatteringShader(occlusionMap	: RenderTarget)
 		{
-			_lightColor = float4(((lightColor >> 16) & 0xff) / 255.,
-								 ((lightColor >> 8) & 0xff) / 255.,
-								 (lightColor & 0xff) / 255.,
-								 1.);
+			super();
 			
-			_backgroundColor = float4(((backgroundColor >> 16) & 0xff) / 255.,
-									  ((backgroundColor >> 8) & 0xff) / 255.,
-									  (backgroundColor & 0xff) / 255.,
-									  1.);
+			_occlusionMap = occlusionMap;
 			
-			_animationShaderPart = new AnimationShaderPart(this);
-			_diffuseShaderPart = new DiffuseShaderPart(this);
+			_animation = new VertexAnimationShaderPart(this);
+			_diffuse = new DiffuseShaderPart(this);
 		}
 		
-		override protected function getOutputPosition() : SValue
+		override protected function initializeSettings(settings:ShaderSettings):void
 		{
-			return vertexClipspacePosition;
+			super.initializeSettings(settings);
+			
+			settings.renderTarget = _occlusionMap;
+		}
+		
+		override protected function getVertexPosition() : SFloat
+		{
+			return _animation.getAnimatedVertexPosition();
 		}
 
-		override protected function getOutputColor() : SValue
+		override protected function getPixelColor() : SFloat
 		{
-			if (getStyleConstant(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-				return _lightColor;
-			else if (getStyleConstant(LightScatteringStyle.IS_SKY, false))
-				return _backgroundColor;
+			var isLightSource	: Boolean	= meshBindings.getConstant(
+				LightScattering.IS_LIGHT_SOURCE, false
+			);
+			
+			/*var isSky			: Boolean	= meshBindings.getConstant(
+				LightScattering.IS_SKY, false
+			);*/
+			
+			var isTransparent	: Boolean	= meshBindings.getConstant(
+				LightScattering.IS_TRANSPARENT, false
+			);
+			
+			if (isLightSource)
+				return sceneBindings.getParameter(LightScattering.SOURCE_COLOR, 4);
+			/*else if (isSky)
+				return sceneBindings.getParameter(LightScattering.SKY_COLOR, 4);*/
 			else
 			{	
-				var diffuse 		: SValue	= null;
-				var diffuseStyle	: Object 	= getStyleConstant(BasicStyle.DIFFUSE);
+				var diffuse : SFloat = _diffuse.getDiffuse();
 				
-				if (styleIsSet(BasicStyle.DIFFUSE))
-				{
-					if (diffuseStyle is uint || diffuseStyle is Vector4)
-						diffuse = getStyleParameter(4, BasicStyle.DIFFUSE);
-					else if (diffuseStyle is TextureResource)
-						diffuse = sampleTexture(BasicStyle.DIFFUSE, interpolate(vertexUV));
-					else
-						throw new Error('Invalid BasicStyle.DIFFUSE value.');
-				}
-				else
-					diffuse = float4(interpolate(vertexRGBColor).rgb, 1.);
-				
-				if (getStyleConstant(LightScatteringStyle.IS_TRANSPARENT, false))
-				{
-//					var color 	: int 		= getStyleConstant(LightScatteringStyle.HAS_COLOR, false) as int;
-					
-					return float4(diffuse.rgba);
-				}
+				if (isTransparent)
+					return diffuse.rgba;
 				else
 					return float4(0., 0., 0., diffuse.a);
 			}
-		}
-		
-		override public function getDataHash(styleData 		: StyleData,
-											 transformData	: TransformData,
-											 world 			: Dictionary) : String
-		{
-			var hash : String	= "occluding";
-			
-			if (styleData.get(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-				hash += "_lightSource";
-			if (styleData.get(LightScatteringStyle.IS_SKY, false))
-				hash += "_sky";
-			if (styleData.get(LightScatteringStyle.IS_TRANSPARENT, false))
-				hash += "_color";
-			
-			var diffuseStyle 	: Object 	= styleData.isSet(BasicStyle.DIFFUSE)
-				? styleData.get(BasicStyle.DIFFUSE)
-				: null;
-			
-			hash += "basic";
-			if (diffuseStyle == null)
-				hash += '_colorFromVertex';
-			else if (diffuseStyle is uint || diffuseStyle is Vector4)
-				hash += '_colorFromConstant';
-			else if (diffuseStyle is TextureResource)
-				hash += '_colorFromTexture';
-			else
-				throw new Error('Invalid BasicStyle.DIFFUSE value');
-			
-			return hash;
-		}
-		
-//		override protected function getOutputColor() : SValue
-//		{		
-//			if (getStyleConstant(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-//				return _lightColor;
-//			else if (getStyleConstant(LightScatteringStyle.IS_SKY, false))
-//				return _backgroundColor;
-//			else
-//			{
-//				var diffuseStyle : Object = styleIsSet(BasicStyle.DIFFUSE) ? 
-//					getStyleConstant(BasicStyle.DIFFUSE) : null;
-//				
-//				var diffuse : SValue = _diffuseShaderPart.getDiffuseColor(diffuseStyle);
-//				
-//				if (getStyleConstant(LightScatteringStyle.HAS_COLOR, false))
-//				{
-//					var color 	: int 		= getStyleConstant(LightScatteringStyle.HAS_COLOR, false) as int;
-//					
-//					return float4(((color >> 16) & 0xff) / 255.,
-//								  ((color >> 8) & 0xff) / 255.,
-//								  (color & 0xff) / 255.,
-//								  diffuse.a);
-//				}
-//				else
-//					return float4(0., 0., 0., diffuse.a);
-//			}
-////				return float4(0., 0., 0., 1.);
-//		}
-//		
-//		override public function getDataHash(styleData 		: StyleData,
-//											 transformData	: TransformData,
-//						 					 worldData		: Dictionary) : String
-//		{			
-//			var hash : String	= "occluding";
-//			
-//			if (styleData.get(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-//				hash += "_lightSource";
-//			if (styleData.get(LightScatteringStyle.IS_SKY, false))
-//				hash += "_sky";
-//			if (styleData.get(LightScatteringStyle.HAS_COLOR, false))
-//				hash += "_color";
-//			
-//			var diffuseStyle 	: Object 	= styleData.isSet(BasicStyle.DIFFUSE)
-//				? styleData.get(BasicStyle.DIFFUSE)
-//				: null;
-//			
-//			hash += _diffuseShaderPart.getDataHash(styleData, transformData, worldData);
-//			hash += _animationShaderPart.getDataHash(styleData, transformData, worldData);
-//			
-//			return hash;
-//		
-//		}
-		
-		override public function fillRenderState(state			: RendererState, 
-												 styleData  	: StyleData, 
-												 transformData	: TransformData, 
-												 worldData		: Dictionary) : void
-		{			
-			super.fillRenderState(state, styleData, transformData, worldData);
 		}
 	}
 }
