@@ -1,43 +1,38 @@
 package aerys.minko.render.effect.steepParallaxMapping
 {
-	import aerys.minko.render.shader.parts.animation.AnimationShaderPart;
-	import aerys.minko.render.effect.animation.AnimationStyle;
-	import aerys.minko.render.effect.basic.BasicStyle;
-	import aerys.minko.render.resource.texture.TextureResource;
-	import aerys.minko.render.shader.ActionScriptShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.render.shader.node.Components;
-	import aerys.minko.render.shader.node.leaf.Sampler;
-	import aerys.minko.scene.data.GlobalDirectionalLightData;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
-	import aerys.minko.type.animation.AnimationMethod;
-	import aerys.minko.type.math.Vector4;
-	
-	import flash.utils.Dictionary;
+	import aerys.minko.render.shader.SFloat;
+	import aerys.minko.render.shader.Shader;
+	import aerys.minko.render.shader.part.DiffuseShaderPart;
+	import aerys.minko.render.shader.part.animation.VertexAnimationShaderPart;
+	import aerys.minko.type.enum.SamplerFiltering;
+	import aerys.minko.type.enum.SamplerMipMapping;
+	import aerys.minko.type.enum.SamplerWrapping;
+	import aerys.minko.type.stream.format.VertexComponent;
 
-	public class SteepParallaxMappingShader extends ActionScriptShader
+	public class SteepParallaxMappingShader extends Shader
 	{
 		private static const NSTEPS		 		: uint		= 20;
 		private static const BUMPSCALE_DEFAULT	: Number 	= .03;
 		
-		private var _animationPart			: AnimationShaderPart	= null;
+		private var _vertexAnimationPart	: VertexAnimationShaderPart;
+		private var _diffuseShaderPart		: DiffuseShaderPart;
 
-		private var _lightDir				: SValue				= null;
-		private var _cameraPosition			: SValue 				= null;
+		private var _lightDir				: SFloat				= null;
+		private var _cameraPosition			: SFloat 				= null;
 		
 		public function SteepParallaxMappingShader()
 		{
 			super();
 			
-			_animationPart = new AnimationShaderPart(main);
+			_vertexAnimationPart	= new VertexAnimationShaderPart(this);
+			_diffuseShaderPart		= new DiffuseShaderPart(this);
 		}
 		
-		override protected function getOutputPosition() : SValue
+		override protected function getVertexPosition() : SFloat
 		{
-			var vertexBitangent	: SValue	= cross(vertexNormal, vertexTangent);
+			var vertexBitangent	: SFloat	= crossProduct(vertexNormal, vertexTangent);
 			
-			var lightDir		: SValue	= getWorldParameter(4, GlobalDirectionalLightData, GlobalDirectionalLightData.DIRECTION);
+			var lightDir		: SFloat	= sceneBindings.getParameter('globalDirectionalLightDirection', 4);
 			lightDir = normalize(multiply3x4(lightDir, worldToLocalMatrix));
 			
 			_lightDir = float3(
@@ -46,49 +41,49 @@ package aerys.minko.render.effect.steepParallaxMapping
 				dotProduct3(lightDir, vertexNormal)
 			);
 			
-			var animationMethod	: uint		= uint(getStyleConstant(AnimationStyle.METHOD, AnimationMethod.DISABLED));
-			var maxInfluences	: uint		= uint(getStyleConstant(AnimationStyle.MAX_INFLUENCES, 0));
-			var numBones		: uint		= uint(getStyleConstant(AnimationStyle.NUM_BONES, 0));
-			var vertexPosition	: SValue	= _animationPart.getVertexPosition(animationMethod, maxInfluences, numBones);
+			var vertexPosition	: SFloat	= _vertexAnimationPart.getAnimatedVertexPosition();
 			
-			return multiply4x4(vertexPosition, localToScreenMatrix);
+			return localToScreen(vertexPosition);
 		}
 		
-		override protected function getOutputColor() : SValue
+		override protected function getPixelColor() : SFloat
 		{
-			var samplerWrapping	: uint		= getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT) as uint;
+			var vertexPosition		: SFloat = getVertexAttribute(VertexComponent.XYZ);
+			var cameraLocalPosition : SFloat = worldToLocal(cameraWorldPosition);
 			
-			var tangentSpaceEye	: SValue	= normalize(cameraLocalPosition.subtract(interpolate(vertexPosition)));
+			
+			var tangentSpaceEye	: SFloat	= normalize(cameraLocalPosition.subtract(interpolate(vertexPosition)));
 			
 			 tangentSpaceEye = float3(
 				dotProduct3(tangentSpaceEye, interpolate(vertexTangent)),
-				dotProduct3(tangentSpaceEye, cross(interpolate(vertexNormal), interpolate(vertexTangent))),
+				dotProduct3(tangentSpaceEye, crossProduct(interpolate(vertexNormal), interpolate(vertexTangent))),
 				dotProduct3(tangentSpaceEye, interpolate(vertexNormal))
 			);
 			
-			var uv				: SValue	= float(0.);						
+			var uv				: SFloat	= float(0.);						
 			
-			var bumpScale		: Number	= getStyleConstant(SteepParallaxMappingStyle.BUMP_SCALE, BUMPSCALE_DEFAULT) as Number;
-			var delta			: SValue	= multiply(float2(extract(tangentSpaceEye, Components.X),
-													   		  extract(tangentSpaceEye, Components.Y)),
+			var bumpScale		: Number	= meshBindings.getConstant('steepParallaxMappingBumpScale', BUMPSCALE_DEFAULT);
+			var delta			: SFloat	= multiply(tangentSpaceEye.xy,
 													   divide(bumpScale,
-															  multiply(extract(tangentSpaceEye, Components.Z), NSTEPS)));
+															  multiply(tangentSpaceEye.z, NSTEPS)));
 			
-			var tmpUV			: SValue	= interpolate(vertexUV);
+			var tmpUV			: SFloat	= interpolate(vertexUV);
 			
 			var height			: Number	= 1.;
-			var resultNotFound	: SValue	= float(1.);
+			var resultNotFound	: SFloat	= float(1.);
 			
 			for (var i : int = 0; i < NSTEPS; i++) 
 			{				
 				if (i == NSTEPS - 1)
 					height = 0;
 				
-				var bump 	: SValue	= sampleTexture(SteepParallaxMappingStyle.BUMP_MAP, tmpUV,
-												 	 	Sampler.FILTER_LINEAR,
-														Sampler.MIPMAP_LINEAR,
-														samplerWrapping);							
-				var resultUV : SValue = multiply(tmpUV, greaterEqual(bump, height), resultNotFound);
+				var samplerWrapping	: uint		= meshBindings.getConstant('steepParallaxMappingWrapping', SamplerWrapping.REPEAT);
+				var bumpTexture	: SFloat = meshBindings.getTextureParameter('steepParallaxMappingBumpMap',
+																			SamplerFiltering.LINEAR,
+																			SamplerMipMapping.LINEAR,
+																			samplerWrapping);
+				var bump 	: SFloat	= sampleTexture(bumpTexture, tmpUV);							
+				var resultUV : SFloat = multiply(tmpUV, greaterEqual(bump, height), resultNotFound);
 				
 				resultNotFound = resultNotFound.multiply(lessThan(bump, height));
 				
@@ -99,60 +94,26 @@ package aerys.minko.render.effect.steepParallaxMapping
 				height -= 1. / NSTEPS;
 			}
 			
-			var diffuse				: SValue	= sampleTexture(BasicStyle.DIFFUSE, uv,
-																Sampler.FILTER_LINEAR,
-																Sampler.MIPMAP_LINEAR,
-																samplerWrapping);
-			
-			var tangentSpaceLight	: SValue	= normalize(interpolate(_lightDir));
-			var normal				: SValue 	= sampleTexture(SteepParallaxMappingStyle.NORMAL_MAP, uv,
-																Sampler.FILTER_LINEAR,
-																Sampler.MIPMAP_LINEAR,
-																samplerWrapping);
+			var tangentSpaceLight	: SFloat	= normalize(interpolate(_lightDir));
+			var normalTexture : SFloat = meshBindings.getTextureParameter('steepParallaxMappingNormalMap',
+																		  SamplerFiltering.LINEAR,
+																		  SamplerMipMapping.LINEAR,
+																		  samplerWrapping);
+				
+			var normal				: SFloat 	= sampleTexture(normalTexture, uv);
 			
 			normal = normalize(subtract(normal.multiply(2.), 1.));
 			
-			var specular			: SValue	= float(getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.));
-			var shininess			: SValue	= float(getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.));
+			var specular			: SFloat	= sceneBindings.getParameter('steepParallaxMappingLightSpecular', 1);
+			var shininess			: SFloat	= sceneBindings.getParameter('steepParallaxMappingLightShininess', 1);
 			
-			var ref					: SValue	= reflect(negate(tangentSpaceLight), normal);
-			var lambert				: SValue	= saturate(tangentSpaceLight.dotProduct3(normal));
-			var spec				: SValue	= power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess)
-													.multiply(specular)
-				                                  	.multiply(lambert);
+			var ref					: SFloat	= reflect(negate(tangentSpaceLight), normal);
+			var lambert				: SFloat	= saturate(tangentSpaceLight.dotProduct3(normal));
+			var spec				: SFloat	= multiply(specular, lambert, power(dotProduct3(ref, normalize(tangentSpaceEye)), shininess))
+			var illumination 		: SFloat 	= multiply(_diffuseShaderPart.getDiffuse(), lambert);
 			
-			var illumination 		: SValue 	= multiply(diffuse, lambert);
-			
-			return illumination.add(spec);
+			return add(illumination, spec);
 		}
-		
-		override public function getDataHash(style		: StyleData,
-											 transform	: TransformData,
-											 world		: Dictionary) : String
-		{
-			var hash 			: String	= "steep_parallax_mapping";
-			
-			hash += "_bumpScale=" + getStyleConstant(SteepParallaxMappingStyle.BUMP_SCALE, BUMPSCALE_DEFAULT);
-			hash += "_lightShininess=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SHININESS, 0.);
-			hash += "_lightSpecular=" + getStyleConstant(SteepParallaxMappingStyle.LIGHT_SPECULAR, 0.);
-			hash += "_wrapping=" + getStyleConstant(SteepParallaxMappingStyle.SAMPLER_WRAPPING, Sampler.WRAPPING_REPEAT);
-			
-			var diffuseStyle 	: Object 	= style.isSet(BasicStyle.DIFFUSE)
-				? style.get(BasicStyle.DIFFUSE)
-				: null;
-			
-			if (diffuseStyle == null)
-				hash += '_colorFromVertex';
-			else if (diffuseStyle is uint || diffuseStyle is Vector4)
-				hash += '_colorFromConstant';
-			else if (diffuseStyle is TextureResource)
-				hash += '_colorFromTexture';
-			else
-				throw new Error('Invalid BasicStyle.DIFFUSE value');
-			
-			hash += _animationPart.getDataHash(style, transform, world);				
-			
-			return hash;
-		}
+	
 	}
 }
