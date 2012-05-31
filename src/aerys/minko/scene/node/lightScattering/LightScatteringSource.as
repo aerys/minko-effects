@@ -27,14 +27,14 @@ package aerys.minko.scene.node.lightScattering
 		{
 			super.addedToSceneHandler(child, scene);
 			
-			scene.bindings.add(_data);
+			scene.bindings.addProvider(_data);
 		}
 		
 		override protected function removedFromSceneHandler(child:ISceneNode, scene:Scene):void
 		{
 			super.removedFromSceneHandler(child, scene);
 			
-			scene.bindings.remove(_data);
+			scene.bindings.removeProvider(_data);
 		}
 	}
 }
