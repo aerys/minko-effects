@@ -65,7 +65,7 @@ package aerys.minko.render.effect.lightScattering
 			var textureLightPos		: SFloat	= localToUV(lightPosition);		
 			var vertexToLightDelta	: SFloat	= subtract(divide(textureLightPos.xy, textureLightPos.w), textureVertexPos);
 			
-			var cameraDirection		: SFloat	= normalize(subtract(cameraWorldLookAt, cameraWorldPosition));
+			var cameraDirection		: SFloat	= normalize(this.cameraDirection);
 			var dotProductResult	: SFloat	= dotProduct3(lighDirection, normalize(cameraDirection));
 			var colorMultiplier 	: SFloat 	= subtract(dotProductResult, 0.5);
 			

@@ -40,7 +40,7 @@ package aerys.minko.render.effect.glow
 		override protected function getPixelColor() : SFloat
 		{
 			var normal 	: SFloat	= interpolate(vertexNormal);
-			var angle 	: SFloat 	= negate(normal.dotProduct3(worldToLocal(cameraWorldPosition)));
+			var angle 	: SFloat 	= negate(normal.dotProduct3(worldToLocal(cameraPosition)));
 			
 			return multiply(_color, power(subtract(0.8, angle), 12.0));
 		}
