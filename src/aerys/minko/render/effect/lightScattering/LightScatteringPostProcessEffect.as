@@ -16,7 +16,7 @@ package aerys.minko.render.effect.lightScattering
 		
 		public function LightScatteringPostProcessEffect(occludedSource	: TextureResource,
 														 renderTarget	: RenderTarget	= null,
-														 renderQuality	: int			= LightScattering.LOW_QUALITY,
+														 renderQuality	: int			= LightScatteringProperties.LOW_QUALITY,
 														 numSamples		: Number		= MAX_SAMPLES)
 		{
 			super(getPasses(renderQuality, numSamples));
@@ -29,7 +29,7 @@ package aerys.minko.render.effect.lightScattering
 								   numSamples		: Number) : Array
 		{
 			
-			if (renderQuality != LightScattering.MANUAL_QUALITY)
+			if (renderQuality != LightScatteringProperties.MANUAL_QUALITY)
 				numSamples = renderQuality * MAX_SAMPLES;
 			
 			var numPasses	: uint 	= Math.ceil(numSamples / MAX_SAMPLES);

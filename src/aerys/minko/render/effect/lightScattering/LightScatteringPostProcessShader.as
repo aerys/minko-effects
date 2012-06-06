@@ -59,7 +59,7 @@ package aerys.minko.render.effect.lightScattering
 		
 		override protected function getPixelColor() : SFloat
 		{
-			var lightPosition		: SFloat	= sceneBindings.getParameter(LightScattering.SOURCE_POSITION, 4);
+			var lightPosition		: SFloat	= sceneBindings.getParameter(LightScatteringProperties.SOURCE_POSITION, 4);
 			var lighDirection 		: SFloat 	= normalize(subtract(lightPosition, cameraPosition));
 			var textureVertexPos	: SFloat	= saturate(interpolate(vertexUV));
 			var textureLightPos		: SFloat	= localToUV(lightPosition);		
@@ -77,22 +77,13 @@ package aerys.minko.render.effect.lightScattering
 			);
 			var initialColor		: SFloat	= sampleTexture(occlusionMap, textureVertexPos);
 			var illumDecay			: SFloat	= float(1.);
-
 			var sampleColor 		: SFloat	= null;
 			
 			// light scattering source values
-			var sourceCensity		: SFloat	= sceneBindings.getParameter(
-				LightScattering.SOURCE_DENSITY, 1
-			);
-			var sourceWeight		: SFloat	= sceneBindings.getParameter(
-				LightScattering.SOURCE_WEIGHT, 1
-			);
-			var sourceDecay			: SFloat	= sceneBindings.getParameter(
-				LightScattering.SOURCE_DECAY, 1
-			);
-			var sourceExposure		: SFloat	= sceneBindings.getParameter(
-				LightScattering.SOURCE_EXPOSURE, 1
-			);
+			var sourceCensity		: SFloat	= sceneBindings.getParameter(LightScatteringProperties.SOURCE_DENSITY, 1);
+			var sourceWeight		: SFloat	= sceneBindings.getParameter(LightScatteringProperties.SOURCE_WEIGHT, 1);
+			var sourceDecay			: SFloat	= sceneBindings.getParameter(LightScatteringProperties.SOURCE_DECAY, 1);
+			var sourceExposure		: SFloat	= sceneBindings.getParameter(LightScatteringProperties.SOURCE_EXPOSURE, 1);
 			
 			vertexToLightDelta = multiply(vertexToLightDelta, divide(sourceCensity, _numSamples));
 			textureVertexPos = add(textureVertexPos, multiply(divide(vertexToLightDelta, _nbPasses), _curPass));
@@ -100,10 +91,9 @@ package aerys.minko.render.effect.lightScattering
 			for (var i : int = 0; i < _numSamples; ++i)
 			{
 				textureVertexPos = add(textureVertexPos, vertexToLightDelta);
-				sampleColor = sampleTexture(occlusionMap, textureVertexPos);
-				sampleColor = multiply(sampleColor, sourceWeight, illumDecay);
-
-				initialColor = add(initialColor, sampleColor);
+				sampleColor		 = sampleTexture(occlusionMap, textureVertexPos);
+				sampleColor		 = multiply(sampleColor, sourceWeight, illumDecay);
+				initialColor	 = add(initialColor, sampleColor);
 
 				illumDecay.scaleBy(sourceDecay);
 			}

@@ -1,6 +1,6 @@
 package aerys.minko.render.effect.lightScattering
 {
-	public class LightScattering
+	public class LightScatteringProperties
 	{
 		public static const SOURCE_POSITION	: String	= "scatteringSourcePosition";
 		public static const SOURCE_COLOR	: String	= "scatteringSourceColor";
