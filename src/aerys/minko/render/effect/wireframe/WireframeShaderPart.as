@@ -10,6 +10,22 @@ package aerys.minko.render.effect.wireframe
 	{
 		private const LINE_THICKNESS_COEFF	: Number	= 1000.;
 		
+		protected function get vertexW() : SFloat
+		{
+			return getVertexAttribute(
+				VertexComponent.create(['w1', 'w2', 'w3'], VertexComponentType.FLOAT_3)
+			);
+		}
+		
+		protected function get wireThickness() : SFloat
+		{
+			var coeff	: SFloat	= meshBindings.getParameter(Wireframe.WIRE_THICKNESS, 1);
+			
+			coeff = subtract(2000, multiply(coeff, 50));
+			
+			return coeff;
+		}
+		
 		public function WireframeShaderPart(main : Shader)
 		{
 			super(main);
@@ -20,13 +36,13 @@ package aerys.minko.render.effect.wireframe
 		 * @return 
 		 * 
 		 */
-		public function getVertexWeight(wireThickness : Number) : SFloat
+		public function getVertexWeight(wireThickness : Object = null) : SFloat
 		{
+			wireThickness ||= this.wireThickness;
+			
 			var cameraDistance 	: SFloat	= length(subtract(cameraPosition, localToWorld(vertexXYZ)));
 			var scale 			: SFloat 	= length(multiply3x3(float3(1., 0., 0.), localToWorldMatrix));
-			var w 				: SFloat	= getVertexAttribute(
-				VertexComponent.create(["w1", "w2", "w3"], VertexComponentType.FLOAT_3)
-			);
+			var w				: SFloat	= vertexW;
 			
 			// original weight is the distance from the vertex to the opposite
 			// side of the triangle, due to the abscence of geometry shader, this

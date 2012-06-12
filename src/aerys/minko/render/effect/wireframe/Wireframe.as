@@ -4,6 +4,6 @@ package aerys.minko.render.effect.wireframe
 	{
 		public static const WIRE_COLOR		: String	= "wireframeWireColor";
 		public static const SURFACE_COLOR	: String	= "wireframeSurfaceColor";
-		public static const WIRE_THICKNESS	: String	= "wireframeWireThicknessCoefficient";
+		public static const WIRE_THICKNESS	: String	= "wireframeWireThickness";
 	}
 }
