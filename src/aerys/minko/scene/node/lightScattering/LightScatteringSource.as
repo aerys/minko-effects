@@ -1,6 +1,6 @@
 package aerys.minko.scene.node.lightScattering
 {
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringProvider;
 	import aerys.minko.scene.node.AbstractSceneNode;
 	import aerys.minko.scene.node.ISceneNode;
 	import aerys.minko.scene.node.Scene;
@@ -8,7 +8,7 @@ package aerys.minko.scene.node.lightScattering
 
 	public class LightScatteringSource extends AbstractSceneNode
 	{
-		private var _data	: LightScatteringData	= new LightScatteringData();
+		private var _data	: LightScatteringProvider	= new LightScatteringProvider();
 		
 		public function LightScatteringSource(color		: int		= 0xffffff,
 											  decay		: Number	= 1.,

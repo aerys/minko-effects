@@ -5,7 +5,7 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.ShaderSettings;
 	import aerys.minko.render.shader.part.PostProcessingShaderPart;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringProvider;
 	import aerys.minko.type.enum.Blending;
 	import aerys.minko.type.enum.DepthTest;
 	import aerys.minko.type.enum.SamplerFiltering;

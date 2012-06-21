@@ -3,7 +3,7 @@ package aerys.minko.render.effect.lightScattering
 	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.Effect;
 	import aerys.minko.render.resource.texture.TextureResource;
-	import aerys.minko.scene.data.lightScattering.LightScatteringData;
+	import aerys.minko.scene.data.lightScattering.LightScatteringProvider;
 	
 	import flash.utils.Dictionary;
 

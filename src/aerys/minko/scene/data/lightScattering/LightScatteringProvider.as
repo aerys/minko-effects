@@ -2,10 +2,8 @@ package aerys.minko.scene.data.lightScattering
 {
 	import aerys.minko.type.data.DataProvider;
 	import aerys.minko.type.math.Vector4;
-	
-	import flash.utils.Dictionary;
 
-	public final class LightScatteringData extends DataProvider
+	public final class LightScatteringProvider extends DataProvider
 	{
 		private static const DATA_DESCRIPTOR	: Object	=
 		{
@@ -79,7 +77,7 @@ package aerys.minko.scene.data.lightScattering
 			changed.execute(this, "density");
 		}
 		
-		public function LightScatteringData()
+		public function LightScatteringProvider()
 		{
 			super();
 			
