@@ -44,7 +44,7 @@ package aerys.minko.scene.node.mesh.geometry
 				
 				var vertexStream	: VertexStream		= originalStream.getStreamByComponent(VertexComponent.XYZ);
 				var vertexOffset	: int 				= packedStream.format.getOffsetForComponent(VertexComponent.XYZ);
-				var vertexLength	: int 				= packedStream.format.dwordsPerVertex;
+				var vertexLength	: int 				= packedStream.format.size;
 				
 				var vertices		: Vector.<Number>	= packedStream._data;
 				var newVertices		: Vector.<Number>	= new Vector.<Number>();
