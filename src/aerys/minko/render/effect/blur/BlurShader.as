@@ -17,6 +17,23 @@ package aerys.minko.render.effect.blur
 		
 		private var _blurSource		: ITextureResource			= null;
 		
+		protected function get blurSourceTexture() : SFloat
+		{
+			var source : SFloat	= _postProcessing.backBufferTexture;
+			
+			if (_blurSource != null)
+			{
+				source = getTexture(
+					_blurSource,
+					SamplerFiltering.LINEAR,
+					SamplerMipMapping.DISABLE,
+					SamplerWrapping.CLAMP
+				);
+			}
+			
+			return source;
+		}
+		
 		public function BlurShader(renderTarget	: RenderTarget 		= null,
 								   priority		: Number			= 0.0,
 								   blurSource	: ITextureResource	= null)
@@ -36,20 +53,8 @@ package aerys.minko.render.effect.blur
 		
 		override protected function getPixelColor() : SFloat
 		{
-			var source : SFloat	= _postProcessing.backBufferTexture;
-			
-			if (_blurSource != null)
-			{
-				source = getTexture(
-					_blurSource,
-					SamplerFiltering.LINEAR,
-					SamplerMipMapping.DISABLE,
-					SamplerWrapping.CLAMP
-				);
-			}
-			
 			return _blur.gaussianBlur(
-				source,
+				blurSourceTexture,
 				float2(viewportWidth, viewportHeight)
 			);
 		}
