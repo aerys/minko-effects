@@ -32,11 +32,11 @@ package aerys.minko.render.effect.dof
 		
 		private function initialize(quality : uint, numPasses : uint) : void
 		{
-			if (quality == DepthOfFieldQuality.LOW)
+			if (quality == DepthOfFieldQuality.NORMAL)
 				_targetSize = 512;
-			else if (quality == DepthOfFieldQuality.NORMAL)
-				_targetSize = 1024;
 			else if (quality == DepthOfFieldQuality.HIGH)
+				_targetSize = 1024;
+			else if (quality == DepthOfFieldQuality.VERY_HIGH)
 				_targetSize = 2048;
 			
 			_depthMap = new RenderTarget(
