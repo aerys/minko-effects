@@ -14,8 +14,37 @@ package aerys.minko.render.effect.blur
 			super(main);
 		}
 		
-		public function gaussianBlur(texture	: SFloat,
-									 outputSize	: SFloat) : SFloat
+		public function linearGaussianBlurX(texture		: SFloat,
+											outputSize	: SFloat) : SFloat
+		{
+			var fragmentCoord : SFloat = multiply(
+				interpolate(vertexUV.xy),
+				outputSize
+			);
+			
+			var color : SFloat = multiply(
+				sampleTexture(texture, divide(fragmentCoord, outputSize)),
+				WEIGHTS[0]
+			);
+			
+			for (var i : uint = 1; i < 3; ++i)
+			{
+				color.incrementBy(multiply(
+					WEIGHTS[i],
+					sampleTexture(texture, divide(add(fragmentCoord, float2(OFFSETS[i], 0)), outputSize))
+				));
+				
+				color.incrementBy(multiply(
+					WEIGHTS[i],
+					sampleTexture(texture, divide(subtract(fragmentCoord, float2(OFFSETS[i], 0)), outputSize))
+				));
+			}
+			
+			return color;
+		}
+		
+		public function linearGaussianBlurY(texture		: SFloat,
+											outputSize	: SFloat) : SFloat
 		{
 			var fragmentCoord : SFloat = multiply(
 				interpolate(vertexUV.xy),

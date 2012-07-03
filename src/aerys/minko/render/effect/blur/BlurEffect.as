@@ -27,8 +27,9 @@ package aerys.minko.render.effect.blur
 				var source : ITextureResource 	= i % 2 == 0 ? target2.textureResource : target1.textureResource;
 				
 				passes.push(new BlurShader(
+					i % 2 ? BlurShader.DIRECTION_HORIZONTAL : BlurShader.DIRECTION_VERTICAL,
 					i == numPasses - 1 ? null : target,
-					numPasses,
+					i,
 					i == 0 ? null : source
 				));
 			}

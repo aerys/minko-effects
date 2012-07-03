@@ -12,10 +12,20 @@ package aerys.minko.render.effect.blur
 	
 	public class BlurShader extends Shader
 	{
+		public static const DIRECTION_VERTICAL		: uint	= 0;
+		public static const DIRECTION_HORIZONTAL	: uint	= 1;
+		
+		private var _direction		: uint						= 0;
+		
 		private var _postProcessing	: PostProcessingShaderPart	= null;
 		private var _blur			: BlurShaderPart			= null;
 		
 		private var _blurSource		: ITextureResource			= null;
+		
+		protected function get postProcessing() : PostProcessingShaderPart
+		{
+			return _postProcessing;
+		}
 		
 		protected function get blurSourceTexture() : SFloat
 		{
@@ -34,7 +44,8 @@ package aerys.minko.render.effect.blur
 			return source;
 		}
 		
-		public function BlurShader(renderTarget	: RenderTarget 		= null,
+		public function BlurShader(direction	: uint,
+								   renderTarget	: RenderTarget 		= null,
 								   priority		: Number			= 0.0,
 								   blurSource	: ITextureResource	= null)
 		{
@@ -53,10 +64,20 @@ package aerys.minko.render.effect.blur
 		
 		override protected function getPixelColor() : SFloat
 		{
-			return _blur.gaussianBlur(
-				blurSourceTexture,
-				float2(viewportWidth, viewportHeight)
-			);
+			if (_direction == DIRECTION_HORIZONTAL)
+			{
+				return _blur.linearGaussianBlurX(
+					blurSourceTexture,
+					float2(viewportWidth, viewportHeight)
+				);
+			}
+			else
+			{
+				return _blur.linearGaussianBlurY(
+					blurSourceTexture,
+					float2(viewportWidth, viewportHeight)
+				);
+			}
 		}
 	}
 }

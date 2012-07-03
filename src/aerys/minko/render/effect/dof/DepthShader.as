@@ -6,11 +6,12 @@ package aerys.minko.render.effect.dof
 	import aerys.minko.render.shader.ShaderSettings;
 	import aerys.minko.type.enum.Blending;
 	
-	public class DepthShader extends BasicShader
+	public final class DepthShader extends BasicShader
 	{
 		private var _depth	: SFloat	= null;
 		
-		public function DepthShader(target : RenderTarget = null, priority : Number = 0.0)
+		public function DepthShader(target 		: RenderTarget 	= null,
+									priority 	: Number 		= 0.0)
 		{
 			super(target, priority);
 		}
@@ -26,7 +27,7 @@ package aerys.minko.render.effect.dof
 		{
 			var position : SFloat = localToView(vertexXYZ);
 			
-			_depth = divide(position.z, cameraZFar);
+			_depth = divide(position.z, subtract(cameraZFar, cameraZNear));
 			
 			return super.getVertexPosition();
 		}
