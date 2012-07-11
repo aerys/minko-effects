@@ -2,11 +2,19 @@ package aerys.minko.render.effect.dof
 {
 	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.Effect;
+	import aerys.minko.render.effect.blur.BlurEffect;
 	import aerys.minko.render.effect.blur.BlurShader;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;
 	
+	/**
+	 * The DeptOfFieldEffect is a post-processing effect using a set of gaussian blur
+	 * passes to blur the rendering according to the depth of each pixel.
+	 * 
+	 * @author Jean-Marc Le Roux
+	 * 
+	 */
 	public class DepthOfFieldEffect extends Effect
 	{
 		private var _targetSize	: uint			= 256;
@@ -23,21 +31,16 @@ package aerys.minko.render.effect.dof
 			return _depthMap.textureResource;
 		}
 		
-		public function DepthOfFieldEffect(quality : uint, numPasses : uint = 1)
+		public function DepthOfFieldEffect(blurQuality : uint, numBlurPasses : uint = 1)
 		{
 			super();
 			
-			initialize(quality, numPasses);
+			initialize(blurQuality, numBlurPasses);
 		}
 		
-		private function initialize(quality : uint, numPasses : uint) : void
+		private function initialize(blurQuality : uint, numBlurPasses : uint) : void
 		{
-			if (quality == DepthOfFieldQuality.NORMAL)
-				_targetSize = 512;
-			else if (quality == DepthOfFieldQuality.HIGH)
-				_targetSize = 1024;
-			else if (quality == DepthOfFieldQuality.VERY_HIGH)
-				_targetSize = 2048;
+			_targetSize = blurQuality;
 			
 			_depthMap = new RenderTarget(
 				_targetSize,
@@ -49,41 +52,21 @@ package aerys.minko.render.effect.dof
 			
 			_depthPass = new DepthShader(_depthMap, 1);
 			
-			setPasses(initializePasses(numPasses));
+			setPasses(initializePasses(numBlurPasses));
 		}
 		
-		private function initializePasses(numPasses : uint) : Vector.<Shader>
+		private function initializePasses(numBlurPasses : uint) : Vector.<Shader>
 		{
-			var passes 	: Vector.<Shader>	= new <Shader>[];
-			var target1	: RenderTarget		= new RenderTarget(
+			var bluredTarget	: RenderTarget		= new RenderTarget(
 				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
 			);
-			var target2	: RenderTarget		= new RenderTarget(
-				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
+			var passes 			: Vector.<Shader>	= BlurEffect.getBlurPasses(
+				_targetSize, numBlurPasses, null, bluredTarget, 2
 			);
-			
-			for (var i : uint = 0; i < numPasses; ++i)
-			{
-				var target : RenderTarget 		= i % 2 == 0 ? target1 : target2;
-				var source : ITextureResource 	= i % 2 == 0 ? target2.textureResource : target1.textureResource;
-				
-				passes.push(new BlurShader(
-					i % 2 ? BlurShader.DIRECTION_HORIZONTAL : BlurShader.DIRECTION_VERTICAL,
-					target,
-					numPasses - i,
-					i == 0 ? null : source
-				));
-			}
-			
-			/*var target : RenderTarget = new RenderTarget(
-				64, 64, new TextureResource(64, 64)
-			);;
-			
-			passes.push(new TextureResampleShader(null, target, 1));*/
 			
 			passes.push(new DepthOfFieldShader(
 				_depthMap.textureResource,
-				target.textureResource,
+				bluredTarget.textureResource,
 				null,
 				0
 			));

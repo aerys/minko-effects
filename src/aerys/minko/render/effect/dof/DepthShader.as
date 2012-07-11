@@ -8,6 +8,8 @@ package aerys.minko.render.effect.dof
 	
 	public final class DepthShader extends BasicShader
 	{
+		private static const EPSILON	: Number	= 0.001;
+		
 		private var _depth	: SFloat	= null;
 		
 		public function DepthShader(target 		: RenderTarget 	= null,
@@ -27,7 +29,10 @@ package aerys.minko.render.effect.dof
 		{
 			var position : SFloat = localToView(vertexXYZ);
 			
-			_depth = divide(position.z, subtract(cameraZFar, cameraZNear));
+			_depth = subtract(
+				divide(position.z, subtract(cameraZFar, cameraZNear)),
+				EPSILON
+			);
 			
 			return super.getVertexPosition();
 		}

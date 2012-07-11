@@ -35,7 +35,7 @@ package aerys.minko.render.effect.blur
 			{
 				source = getTexture(
 					_blurSource,
-					SamplerFiltering.LINEAR,
+					SamplerFiltering.NEAREST,
 					SamplerMipMapping.DISABLE,
 					SamplerWrapping.CLAMP
 				);
@@ -45,11 +45,13 @@ package aerys.minko.render.effect.blur
 		}
 		
 		public function BlurShader(direction	: uint,
+								   blurSource	: ITextureResource	= null,
 								   renderTarget	: RenderTarget 		= null,
-								   priority		: Number			= 0.0,
-								   blurSource	: ITextureResource	= null)
+								   priority		: Number			= 0.0)
 		{
 			super(renderTarget, priority);
+			
+			_direction = direction;
 			
 			_postProcessing = new PostProcessingShaderPart(this);
 			_blur = new BlurShaderPart(this);
