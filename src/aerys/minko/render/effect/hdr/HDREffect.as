@@ -2,41 +2,50 @@ package aerys.minko.render.effect.hdr
 {
 	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.Effect;
+	import aerys.minko.render.effect.blur.BlurEffect;
+	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;
 	
 	public class HDREffect extends Effect
 	{
-		public function HDREffect()
+		private static const MIN_QUALITY	: uint	= 128;
+		
+		public function HDREffect(quality 					: uint 	= 512,
+								  numBlurPassesPerSample	: uint	= 2)
 		{
 			super();
 			
-			initialize();
+			initialize(quality, numBlurPassesPerSample);
 		}
 		
-		private function initialize() : void
+		private function initialize(quality : uint, numBlurPassesPerSample : uint) : void
 		{
-			var passes 					: Vector.<Shader>	= new <Shader>[];
-			var originalBrightedTarget	: RenderTarget		= new RenderTarget(
-				256, 256, new TextureResource(256, 256)
+			var passes 		: Vector.<Shader>			= new <Shader>[];
+			var ressources 	: Vector.<ITextureResource> = new <ITextureResource>[];
+			var target		: RenderTarget				= new RenderTarget(
+				quality, quality, new TextureResource(quality, quality)
 			);
-			var halfBrightedTarget		: RenderTarget		= new RenderTarget(
-				128, 128, new TextureResource(128, 128)
-			);
-			var quarterBrightedTarget	: RenderTarget		= new RenderTarget(
-				64, 64, new TextureResource(64, 64)
-			);
+			var priority	: uint						= 10;
 			
-			passes.push(
-				new BrightShader(null, originalBrightedTarget, 4),
-				new CloneShader(originalBrightedTarget.textureResource, halfBrightedTarget, 3),
-				new CloneShader(halfBrightedTarget.textureResource, quarterBrightedTarget, 2),
-				new HDRShader(
-					originalBrightedTarget.textureResource,
-					halfBrightedTarget.textureResource,
-					quarterBrightedTarget.textureResource
-				)
-			);
+			passes.push(new BrightShader(null, target, priority));
+			
+			while (quality >= MIN_QUALITY)
+			{
+				var source 	: ITextureResource 	= target.textureResource;
+				
+				target = new RenderTarget(
+					quality, quality, new TextureResource(quality, quality)
+				);
+				ressources.push(target.textureResource);
+				
+				BlurEffect.getBlurPasses(
+					quality, numBlurPassesPerSample, source, target, --priority, passes
+				);
+				quality >>= 1;
+			}
+			
+			passes.push(new HDRShader(ressources));
 			
 			setPasses(passes);
 		}

@@ -31,9 +31,11 @@ package aerys.minko.render.effect.blur
 											 numPasses 		: uint,
 											 blurSource		: ITextureResource	= null,
 											 blurTarget		: RenderTarget		= null,
-											 priorityOffset	: Number			= 0.) : Vector.<Shader>
+											 priorityOffset	: Number			= 0.,
+											 passes			: Vector.<Shader>	= null) : Vector.<Shader>
 		{
-			var passes 	: Vector.<Shader>	= new <Shader>[];
+			passes = passes != null ? passes : new <Shader>[];
+			
 			var target1	: RenderTarget		= new RenderTarget(
 				quality, quality, new TextureResource(quality, quality)
 			);

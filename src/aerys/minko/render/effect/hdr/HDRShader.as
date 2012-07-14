@@ -11,23 +11,17 @@ package aerys.minko.render.effect.hdr
 	
 	public class HDRShader extends Shader
 	{
-		private var _original		: ITextureResource;
-		private var _half			: ITextureResource;
-		private var _quarter		: ITextureResource;
+		private var _resources		: Vector.<ITextureResource>;
 		
 		private var _postProcessing	: PostProcessingShaderPart;
 		
-		public function HDRShader(original		: ITextureResource,
-								  half			: ITextureResource,
-								  quarter		: ITextureResource,
+		public function HDRShader(resources		: Vector.<ITextureResource>,
 								  renderTarget	: RenderTarget	= null,
 								  priority		: Number		= 0.0)
 		{
 			super(renderTarget, priority);
 			
-			_original = original;
-			_half = half;
-			_quarter = quarter;
+			_resources = resources;
 			
 			_postProcessing = new PostProcessingShaderPart(this);
 		}
@@ -41,19 +35,18 @@ package aerys.minko.render.effect.hdr
 		{
 			var uv		: SFloat	= interpolate(vertexUV);
 			var color	: SFloat	= _postProcessing.backBufferPixel;
-			
-			color.incrementBy(sampleTexture(
-				getTexture(_original, SamplerFiltering.LINEAR, SamplerMipMapping.LINEAR, SamplerWrapping.CLAMP),
-				uv
-			));
-			color.incrementBy(sampleTexture(
-				getTexture(_half, SamplerFiltering.LINEAR, SamplerMipMapping.LINEAR, SamplerWrapping.CLAMP),
-				uv
-			));
-			color.incrementBy(sampleTexture(
-				getTexture(_quarter, SamplerFiltering.LINEAR, SamplerMipMapping.LINEAR, SamplerWrapping.CLAMP),
-				uv
-			));
+		
+			for each (var ressource : ITextureResource in _resources)
+			{
+				var texture : SFloat = getTexture(
+					ressource,
+					SamplerFiltering.LINEAR,
+					SamplerMipMapping.DISABLE,
+					SamplerWrapping.CLAMP
+				)
+					
+				color.incrementBy(sampleTexture(texture, uv));
+			}
 			
 			return color;
 		}
