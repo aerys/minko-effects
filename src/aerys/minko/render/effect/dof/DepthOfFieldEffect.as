@@ -50,7 +50,7 @@ package aerys.minko.render.effect.dof
 				0xffffffff
 			);
 			
-			_depthPass = new DepthShader(_depthMap, 1);
+			_depthPass = new DepthShader(_depthMap, 100);
 			
 			setPasses(initializePasses(numBlurPasses));
 		}

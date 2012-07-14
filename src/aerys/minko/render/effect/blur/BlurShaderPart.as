@@ -9,6 +9,15 @@ package aerys.minko.render.effect.blur
 		private static const OFFSETS	: Vector.<Number>	= new <Number>[0.0, 1.3846153846, 3.2307692308];
 		private static const WEIGHTS	: Vector.<Number>	= new <Number>[0.2270270270, 0.3162162162, 0.0702702703];
 		
+		/**
+		 * Efficient Gaussian blur with linear sampling
+		 * http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+		 *  
+		 * 
+		 * 
+		 * @param main
+		 * 
+		 */
 		public function BlurShaderPart(main : Shader)
 		{
 			super(main);

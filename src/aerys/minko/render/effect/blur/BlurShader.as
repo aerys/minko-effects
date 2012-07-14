@@ -52,11 +52,10 @@ package aerys.minko.render.effect.blur
 			super(renderTarget, priority);
 			
 			_direction = direction;
+			_blurSource = blurSource;
 			
 			_postProcessing = new PostProcessingShaderPart(this);
 			_blur = new BlurShaderPart(this);
-			
-			_blurSource = blurSource;
 		}
 		
 		override protected function getVertexPosition() : SFloat
