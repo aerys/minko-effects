@@ -10,11 +10,9 @@ package aerys.minko.render.effect.blur
 		private static const WEIGHTS	: Vector.<Number>	= new <Number>[0.2270270270, 0.3162162162, 0.0702702703];
 		
 		/**
-		 * Efficient Gaussian blur with linear sampling
+		 * Efficient Gaussian blur with linear sampling using a 3x3 kernel.
 		 * http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 		 *  
-		 * 
-		 * 
 		 * @param main
 		 * 
 		 */
