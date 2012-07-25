@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.blur
 {
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.Effect;
+	import aerys.minko.render.Effect;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;

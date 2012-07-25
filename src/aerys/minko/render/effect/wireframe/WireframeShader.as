@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.wireframe
 {
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.material.basic.BasicShader;
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.ShaderSettings;

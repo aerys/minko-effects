@@ -1,6 +1,6 @@
 package aerys.minko.render.effect.fog
 {
-	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.material.basic.BasicShader;
 	import aerys.minko.render.shader.SFloat;
 	
 	public class FogShader extends BasicShader

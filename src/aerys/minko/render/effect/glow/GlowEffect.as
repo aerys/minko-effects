@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.glow
 {
-	import aerys.minko.render.effect.Effect;
-	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.Effect;
+	import aerys.minko.render.material.basic.BasicShader;
 	
 	public class GlowEffect extends Effect
 	{

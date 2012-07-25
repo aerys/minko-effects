@@ -3,8 +3,8 @@ package aerys.minko.render.effect.wireframe
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.part.ShaderPart;
-	import aerys.minko.type.stream.format.VertexComponent;
-	import aerys.minko.type.stream.format.VertexComponentType;
+	import aerys.minko.render.geometry.stream.format.VertexComponent;
+	import aerys.minko.render.geometry.stream.format.VertexComponentType;
 
 	public class WireframeShaderPart extends ShaderPart
 	{
