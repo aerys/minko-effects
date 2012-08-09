@@ -56,7 +56,7 @@ package aerys.minko.render.effect.lightScattering
 				return sceneBindings.getParameter(LightScattering.SKY_COLOR, 4);*/
 			else
 			{	
-				var diffuse : SFloat = _diffuse.getDiffuse();
+				var diffuse : SFloat = _diffuse.getDiffuseColor();
 				
 				if (isTransparent)
 					return diffuse.rgba;
