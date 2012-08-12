@@ -61,7 +61,7 @@ package aerys.minko.render.effect.dof
 				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
 			);
 			var passes 			: Vector.<Shader>	= BlurEffect.getBlurPasses(
-				_targetSize, numBlurPasses, null, bluredTarget, 2
+				_targetSize, numBlurPasses, 1, null, bluredTarget, 2
 			);
 			
 			passes.push(new DepthOfFieldShader(
