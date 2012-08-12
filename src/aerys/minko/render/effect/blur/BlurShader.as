@@ -35,8 +35,8 @@ package aerys.minko.render.effect.blur
 			{
 				source = getTexture(
 					_blurSource,
-					SamplerFiltering.NEAREST,
-					SamplerMipMapping.DISABLE,
+					SamplerFiltering.LINEAR,
+					SamplerMipMapping.LINEAR,
 					SamplerWrapping.CLAMP
 				);
 			}
@@ -65,20 +65,14 @@ package aerys.minko.render.effect.blur
 		
 		override protected function getPixelColor() : SFloat
 		{
+			var size : SFloat = _blurSource
+				? float2(_blurSource.width, _blurSource.height)
+				: float2(viewportWidth, viewportHeight);
+			
 			if (_direction == DIRECTION_HORIZONTAL)
-			{
-				return _blur.linearGaussianBlurX(
-					blurSourceTexture,
-					float2(viewportWidth, viewportHeight)
-				);
-			}
+				return _blur.linearGaussianBlurX(blurSourceTexture, size);
 			else
-			{
-				return _blur.linearGaussianBlurY(
-					blurSourceTexture,
-					float2(viewportWidth, viewportHeight)
-				);
-			}
+				return _blur.linearGaussianBlurY(blurSourceTexture, size);
 		}
 	}
 }
