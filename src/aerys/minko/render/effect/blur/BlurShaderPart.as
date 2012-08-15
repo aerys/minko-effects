@@ -25,8 +25,8 @@ package aerys.minko.render.effect.blur
 		public function linearGaussianBlurX(texture		: SFloat,
 											outputSize	: SFloat) : SFloat
 		{
-			var fragmentCoord : SFloat = interpolate(vertexUV.xy);
-			var color : SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
+			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
+			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
@@ -47,8 +47,8 @@ package aerys.minko.render.effect.blur
 		public function linearGaussianBlurY(texture		: SFloat,
 											outputSize	: SFloat) : SFloat
 		{
-			var fragmentCoord : SFloat = interpolate(vertexUV.xy);
-			var color : SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
+			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
+			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
