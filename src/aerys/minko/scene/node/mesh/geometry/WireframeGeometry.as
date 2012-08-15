@@ -2,14 +2,15 @@ package aerys.minko.scene.node.mesh.geometry
 {
 	import aerys.minko.ns.minko_stream;
 	import aerys.minko.type.math.Vector4;
-	import aerys.minko.type.stream.IVertexStream;
-	import aerys.minko.type.stream.IndexStream;
-	import aerys.minko.type.stream.StreamUsage;
-	import aerys.minko.type.stream.VertexStream;
-	import aerys.minko.type.stream.VertexStreamList;
-	import aerys.minko.type.stream.format.VertexComponent;
-	import aerys.minko.type.stream.format.VertexComponentType;
-	import aerys.minko.type.stream.format.VertexFormat;
+	import aerys.minko.render.geometry.stream.IVertexStream;
+	import aerys.minko.render.geometry.stream.IndexStream;
+	import aerys.minko.render.geometry.stream.StreamUsage;
+	import aerys.minko.render.geometry.stream.VertexStream;
+	import aerys.minko.render.geometry.stream.VertexStreamList;
+	import aerys.minko.render.geometry.stream.format.VertexComponent;
+	import aerys.minko.render.geometry.stream.format.VertexComponentType;
+	import aerys.minko.render.geometry.stream.format.VertexFormat;
+	import aerys.minko.render.geometry.Geometry;
 	
 	public final class WireframeGeometry extends Geometry
 	{
@@ -44,7 +45,7 @@ package aerys.minko.scene.node.mesh.geometry
 				
 				var vertexStream	: VertexStream		= originalStream.getStreamByComponent(VertexComponent.XYZ);
 				var vertexOffset	: int 				= packedStream.format.getOffsetForComponent(VertexComponent.XYZ);
-				var vertexLength	: int 				= packedStream.format.size;
+				var vertexLength	: int 				= packedStream.format.vertexSize;
 				
 				var vertices		: Vector.<Number>	= packedStream._data;
 				var newVertices		: Vector.<Number>	= new Vector.<Number>();

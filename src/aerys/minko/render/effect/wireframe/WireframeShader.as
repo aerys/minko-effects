@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.wireframe
 {
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.material.basic.BasicShader;
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.ShaderSettings;
@@ -54,7 +54,7 @@ package aerys.minko.render.effect.wireframe
 			
 			var diffuseColor	: SFloat 	= meshBindings.propertyExists(Wireframe.WIRE_COLOR)
 				? rgba(wireColor)
-				: diffuse.getDiffuse();
+				: diffuse.getDiffuseColor();
 			
 			// the interpolated weight is a vector of dimension 3 containing
 			// values representing the distance of the fragment to each side

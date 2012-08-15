@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.hdr
 {
+	import aerys.minko.render.Effect;
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.Effect;
 	import aerys.minko.render.effect.blur.BlurEffect;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
@@ -11,15 +11,18 @@ package aerys.minko.render.effect.hdr
 	{
 		private static const MIN_QUALITY	: uint	= 128;
 		
-		public function HDREffect(quality 					: uint 	= 512,
-								  numBlurPassesPerSample	: uint	= 2)
+		public function HDREffect(quality 					: uint 		= 512,
+								  numBlurPassesPerSample	: uint		= 2,
+								  blurAspectRatio			: Number	= 1.)
 		{
 			super();
 			
-			initialize(quality, numBlurPassesPerSample);
+			initialize(quality, numBlurPassesPerSample, blurAspectRatio);
 		}
 		
-		private function initialize(quality : uint, numBlurPassesPerSample : uint) : void
+		private function initialize(quality 				: uint,
+									numBlurPassesPerSample 	: uint,
+									blurAspectRatio 		: Number) : void
 		{
 			var passes 		: Vector.<Shader>			= new <Shader>[];
 			var ressources 	: Vector.<ITextureResource> = new <ITextureResource>[];
@@ -40,7 +43,7 @@ package aerys.minko.render.effect.hdr
 				ressources.push(target.textureResource);
 				
 				BlurEffect.getBlurPasses(
-					quality, numBlurPassesPerSample, source, target, --priority, passes
+					quality, numBlurPassesPerSample, blurAspectRatio, source, target, --priority, passes
 				);
 				quality >>= 1;
 			}

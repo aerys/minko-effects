@@ -11,6 +11,7 @@ package aerys.minko.render.effect.blur
 		
 		/**
 		 * Efficient Gaussian blur with linear sampling using a 3x3 kernel.
+		 * 
 		 * http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 		 *  
 		 * @param main
@@ -24,26 +25,19 @@ package aerys.minko.render.effect.blur
 		public function linearGaussianBlurX(texture		: SFloat,
 											outputSize	: SFloat) : SFloat
 		{
-			var fragmentCoord : SFloat = multiply(
-				interpolate(vertexUV.xy),
-				outputSize
-			);
-			
-			var color : SFloat = multiply(
-				sampleTexture(texture, divide(fragmentCoord, outputSize)),
-				WEIGHTS[0]
-			);
+			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
+			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, divide(add(fragmentCoord, float2(OFFSETS[i], 0)), outputSize))
+					sampleTexture(texture, add(fragmentCoord, divide(float2(OFFSETS[i], 0), outputSize.xx)))
 				));
 				
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, divide(subtract(fragmentCoord, float2(OFFSETS[i], 0)), outputSize))
+					sampleTexture(texture, subtract(fragmentCoord, divide(float2(OFFSETS[i], 0), outputSize.xx)))
 				));
 			}
 			
@@ -53,26 +47,19 @@ package aerys.minko.render.effect.blur
 		public function linearGaussianBlurY(texture		: SFloat,
 											outputSize	: SFloat) : SFloat
 		{
-			var fragmentCoord : SFloat = multiply(
-				interpolate(vertexUV.xy),
-				outputSize
-			);
-			
-			var color : SFloat = multiply(
-				sampleTexture(texture, divide(fragmentCoord, outputSize)),
-				WEIGHTS[0]
-			);
+			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
+			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, divide(add(fragmentCoord, float2(0, OFFSETS[i])), outputSize))
+					sampleTexture(texture, add(fragmentCoord, divide(float2(0, OFFSETS[i]), outputSize.yy)))
 				));
 				
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, divide(subtract(fragmentCoord, float2(0, OFFSETS[i])), outputSize))
+					sampleTexture(texture, subtract(fragmentCoord, divide(float2(0, OFFSETS[i]), outputSize.yy)))
 				));
 			}
 			

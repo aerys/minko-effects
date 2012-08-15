@@ -43,8 +43,8 @@ package aerys.minko.render.effect.hdr
 					SamplerFiltering.LINEAR,
 					SamplerMipMapping.DISABLE,
 					SamplerWrapping.CLAMP
-				)
-					
+				);
+				
 				color.incrementBy(sampleTexture(texture, uv));
 			}
 			

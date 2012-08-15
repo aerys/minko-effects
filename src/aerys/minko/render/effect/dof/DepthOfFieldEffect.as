@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.dof
 {
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.Effect;
+	import aerys.minko.render.Effect;
 	import aerys.minko.render.effect.blur.BlurEffect;
 	import aerys.minko.render.effect.blur.BlurShader;
 	import aerys.minko.render.resource.texture.ITextureResource;
@@ -61,7 +61,7 @@ package aerys.minko.render.effect.dof
 				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
 			);
 			var passes 			: Vector.<Shader>	= BlurEffect.getBlurPasses(
-				_targetSize, numBlurPasses, null, bluredTarget, 2
+				_targetSize, numBlurPasses, 1, null, bluredTarget, 2
 			);
 			
 			passes.push(new DepthOfFieldShader(

@@ -1,7 +1,7 @@
 package aerys.minko.render.effect.lightScattering
 {
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.effect.basic.BasicShader;
+	import aerys.minko.render.material.basic.BasicShader;
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.ShaderSettings;
 	import aerys.minko.render.shader.part.DiffuseShaderPart;
@@ -56,7 +56,7 @@ package aerys.minko.render.effect.lightScattering
 				return sceneBindings.getParameter(LightScattering.SKY_COLOR, 4);*/
 			else
 			{	
-				var diffuse : SFloat = _diffuse.getDiffuse();
+				var diffuse : SFloat = _diffuse.getDiffuseColor();
 				
 				if (isTransparent)
 					return diffuse.rgba;
