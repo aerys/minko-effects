@@ -1,10 +1,10 @@
 package aerys.minko.render.effect.wireframe
 {
+	import aerys.minko.render.geometry.stream.format.VertexComponent;
+	import aerys.minko.render.geometry.stream.format.VertexComponentType;
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.part.ShaderPart;
-	import aerys.minko.render.geometry.stream.format.VertexComponent;
-	import aerys.minko.render.geometry.stream.format.VertexComponentType;
 
 	public class WireframeShaderPart extends ShaderPart
 	{
@@ -19,7 +19,7 @@ package aerys.minko.render.effect.wireframe
 		
 		protected function get wireThickness() : SFloat
 		{
-			var coeff	: SFloat	= meshBindings.getParameter(Wireframe.WIRE_THICKNESS, 1);
+			var coeff	: SFloat	= meshBindings.getParameter(WireframeProperties.THICKNESS, 1);
 			
 			coeff = subtract(2000, multiply(coeff, 50));
 			
@@ -62,10 +62,8 @@ package aerys.minko.render.effect.wireframe
 			// only the shortest distance is used to compute the color of the fragment
 			var d 	: SFloat 	= min(
 				interpolatedVertexWeights.x,
-				min(
-					interpolatedVertexWeights.y,
-					interpolatedVertexWeights.z
-				)
+				interpolatedVertexWeights.y,
+				interpolatedVertexWeights.z
 			);
 			
 			// e is strictly negative and closer to 0 the closer the fragment
@@ -76,6 +74,27 @@ package aerys.minko.render.effect.wireframe
 			// triangle edge and rapidly approaches 0 when e decreases (when
 			// the fragment gets further from an edge)			
 			return power(2., e);
+		}
+		
+		public function applyWireframe(diffuseColor : SFloat, weight : SFloat = null) : SFloat
+		{
+			weight ||= interpolate(getVertexWeight());
+			
+			var wireColor 		: SFloat	= meshBindings.getParameter(
+				WireframeProperties.COLOR, 4, 0x000000ff
+			);
+			
+			// the interpolated weight is a vector of dimension 3 containing
+			// values representing the distance of the fragment to each side
+			// of the triangle
+			var wireFactor		: SFloat	= getWireFactor(weight);
+			
+			// the final color of the pixel is l * line_color + (1 - l) * surface_color
+			diffuseColor = mix(diffuseColor, wireColor, wireFactor);
+			
+			kill(multiply(lessThan(diffuseColor.a, .001), -1));
+			
+			return diffuseColor;
 		}
 	}
 }
