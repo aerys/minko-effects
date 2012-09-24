@@ -19,7 +19,8 @@ package aerys.minko.render.effect.hdr
 			var rgbToLuminance 	: SFloat 	= float3(0.2126, 0.7152, 0.0722);
 			var luminance		: SFloat	= dotProduct3(rgb, rgbToLuminance);
 			
-			luminance.scaleBy(sceneBindings.getParameter('hdrIntensity', 1));
+			luminance.scaleBy(sceneBindings.getParameter('hdrIntensity', 1, 1));
+			luminance = power(luminance, sceneBindings.getParameter('hdrExponent', 1, 1));
 			
 			rgb.scaleBy(float4(luminance.xxx, 1));
 			
