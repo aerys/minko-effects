@@ -1,68 +1,68 @@
 package aerys.minko.render.effect.lightScattering
 {
-	import aerys.minko.render.target.AbstractRenderTarget;
-	import aerys.minko.render.renderer.RendererState;
-	import aerys.minko.render.shader.ActionScriptShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
+	import aerys.minko.render.RenderTarget;
+	import aerys.minko.render.material.basic.BasicShader;
+	import aerys.minko.render.shader.SFloat;
+	import aerys.minko.render.shader.ShaderSettings;
+	import aerys.minko.render.shader.part.DiffuseShaderPart;
+	import aerys.minko.render.shader.part.animation.VertexAnimationShaderPart;
 	
-	import flash.utils.Dictionary;
-	
-	public class LightScatteringShader extends ActionScriptShader
+	public class LightScatteringShader extends BasicShader
 	{
-		private var _lightColor			: SValue	= null;
-		private var _backgroundColor	: SValue	= null;
+		private var _animation			: VertexAnimationShaderPart	= null;
+		private var _diffuse			: DiffuseShaderPart			= null;
+
+		private var _occlusionMap		: RenderTarget				= null;
 		
-		public function LightScatteringShader(lightColor		: int,
-											  backgroundColor	: int)
+		public function LightScatteringShader(occlusionMap	: RenderTarget)
 		{
-			_lightColor = float4(((lightColor >> 16) & 0xff) / 255.,
-								 ((lightColor >> 8) & 0xff) / 255.,
-								 (lightColor & 0xff) / 255.,
-								 1.);
+			super();
 			
-			_backgroundColor = float4(((backgroundColor >> 16) & 0xff) / 255.,
-									  ((backgroundColor >> 8) & 0xff) / 255.,
-									  (backgroundColor & 0xff) / 255.,
-									  1.);
+			_occlusionMap = occlusionMap;
+			
+			_animation = new VertexAnimationShaderPart(this);
+			_diffuse = new DiffuseShaderPart(this);
 		}
 		
-		override protected function getOutputPosition() : SValue
+		override protected function initializeSettings(settings:ShaderSettings):void
 		{
-			return vertexClipspacePosition;
+			super.initializeSettings(settings);
+			
+			settings.renderTarget = _occlusionMap;
 		}
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
-		{		
-			if (getStyleConstant(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-				return _lightColor;
-			else if (getStyleConstant(LightScatteringStyle.IS_SKY, false))
-				return _backgroundColor;
+		override protected function getVertexPosition() : SFloat
+		{
+			return _animation.getAnimatedVertexPosition();
+		}
+
+		override protected function getPixelColor() : SFloat
+		{
+			var isLightSource	: Boolean	= meshBindings.getConstant(
+				LightScatteringProperties.IS_LIGHT_SOURCE, false
+			);
+			
+			/*var isSky			: Boolean	= meshBindings.getConstant(
+				LightScattering.IS_SKY, false
+			);*/
+			
+			var isTransparent	: Boolean	= meshBindings.getConstant(
+				LightScatteringProperties.IS_TRANSPARENT, false
+			);
+			
+			if (isLightSource)
+				return sceneBindings.getParameter(LightScatteringProperties.SOURCE_COLOR, 4);
+			/*else if (isSky)
+				return sceneBindings.getParameter(LightScattering.SKY_COLOR, 4);*/
 			else
-				return float4(0., 0., 0., 1.);
-		}
-		
-		override public function getDataHash(styleData 		: StyleData,
-											 transformData	: TransformData,
-						 					 world 			: Dictionary) : String
-		{
-			var hash : String	= "occluding";
-			
-			if (styleData.get(LightScatteringStyle.IS_LIGHT_SOURCE, false))
-				hash += "_lightSource";
-			if (styleData.get(LightScatteringStyle.IS_SKY, false))
-				hash += "_sky";
-			
-			return hash;
-		}
-		
-		override public function fillRenderState(state			: RendererState, 
-												 styleData  	: StyleData, 
-												 transformData	: TransformData, 
-												 worldData		: Dictionary) : void
-		{			
-			super.fillRenderState(state, styleData, transformData, worldData);
+			{	
+				var diffuse : SFloat = _diffuse.getDiffuseColor();
+				
+				if (isTransparent)
+					return diffuse.rgba;
+				else
+					return float4(0., 0., 0., diffuse.a);
+			}
 		}
 	}
 }

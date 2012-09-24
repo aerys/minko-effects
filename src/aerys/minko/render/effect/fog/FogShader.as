@@ -1,30 +1,24 @@
 package aerys.minko.render.effect.fog
 {
-	import aerys.minko.render.effect.basic.BasicShader;
-	import aerys.minko.render.shader.SValue;
-	import aerys.minko.scene.data.StyleData;
-	import aerys.minko.scene.data.TransformData;
-	
-	import flash.utils.Dictionary;
+	import aerys.minko.render.material.basic.BasicShader;
+	import aerys.minko.render.shader.SFloat;
 	
 	public class FogShader extends BasicShader
 	{
-		private static const FOG	: FogShaderPart	= new FogShaderPart();
+		private var _fogPart	: FogShaderPart	= null;
 		
-		override protected function getOutputColor(kills : Vector.<SValue>) : SValue
+		public function FogShader()
 		{
-			var fogColor 	: SValue	= getStyleParameter(4, FogStyle.COLOR);
-			var fogFactor	: SValue	= FOG.getFogFactor();
-			
-			return mix(getOutputColor(kills), fogColor, fogFactor);
+			_fogPart = new FogShaderPart(this);
 		}
 		
-		override public function getDataHash(styleData		: StyleData,
-											 transformData	: TransformData,
-											 worldData		: Dictionary) : String
+		override protected function getPixelColor() : SFloat
 		{
-			return super.getDataHash(styleData, transformData, worldData)
-				   + FOG.getDataHash(styleData, transformData, worldData);
+			return mix(
+				super.getPixelColor(),
+				sceneBindings.getParameter(Fog.COLOR, 4),
+				_fogPart.getFogFactor()
+			);
 		}
 	}
 }
