@@ -35,20 +35,21 @@ package aerys.minko.render.effect.hdr
 		{
 			var uv		: SFloat	= interpolate(vertexUV);
 			var color	: SFloat	= _postProcessing.backBufferPixel;
+			var hdr		: SFloat	= float3(0, 0, 0);
 		
 			for each (var ressource : ITextureResource in _resources)
 			{
 				var texture : SFloat = getTexture(
 					ressource,
 					SamplerFiltering.LINEAR,
-					SamplerMipMapping.DISABLE,
+					SamplerMipMapping.LINEAR,
 					SamplerWrapping.CLAMP
 				);
 				
-				color.incrementBy(sampleTexture(texture, uv));
+				hdr.incrementBy(sampleTexture(texture, uv));
 			}
 			
-			return color;
+			return float4(add(color.xyz, hdr.xyz), color.a);
 		}
 	}
 }
