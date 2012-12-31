@@ -7,8 +7,8 @@ package aerys.minko.render.effect.wireframe
 
 	public class WireframeShader extends BasicShader
 	{
-		private var _wireframe	: WireframeShaderPart		= null;
-		private var _diffuse	: DiffuseShaderPart			= null;
+		private var _wireframe	: WireframeShaderPart;
+		private var _diffuse	: DiffuseShaderPart;
 		
 		public function WireframeShader(renderTarget 	: RenderTarget 	= null,
 										priority		: Number		= 0.)
