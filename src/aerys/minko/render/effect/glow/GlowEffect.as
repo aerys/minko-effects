@@ -5,14 +5,11 @@ package aerys.minko.render.effect.glow
 	
 	public class GlowEffect extends Effect
 	{
-		public function GlowEffect(blur		: Number	= 0.165,
-								   red		: Number	= 1.,
-								   green	: Number	= 1.,
-								   blue		: Number	= 1.,
-								   alpha	: Number	= 1.)
+		public function GlowEffect(blur				: Number	= 0.165,
+								   color			: uint		= 0xffffffff)
 		{
 			super(
-				new GlowShader(blur, red, green, blue, alpha),
+				new GlowShader(null, 0, blur, color),
 				new BasicShader()
 			);
 		}
