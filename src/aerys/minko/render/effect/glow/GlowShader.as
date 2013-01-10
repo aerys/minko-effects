@@ -31,7 +31,7 @@ package aerys.minko.render.effect.glow
 
 		override protected function initializeSettings(settings : ShaderSettings) : void
 		{
-			super.initializeSettings(settings);
+			super.initializeSettings(settings); 
 			
 			settings.depthWriteEnabled	= false;
 			settings.triangleCulling	= TriangleCulling.FRONT;
@@ -40,10 +40,9 @@ package aerys.minko.render.effect.glow
 
 		override protected function getVertexPosition() : SFloat
 		{
-			var pos		: SFloat	= localToView(vertexXYZ);
-			pos						= add(pos, multiply(vertexNormal, float3(_blur, _blur, 0.)));
+			var position	: SFloat	= add(vertexXYZ, multiply(vertexNormal, float4(_blur, _blur, _blur, .0)));
 			
-			return multiply4x4(pos, projectionMatrix);
+			return localToScreen(position);
 		}
 		
 		override protected function getPixelColor() : SFloat
