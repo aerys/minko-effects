@@ -15,7 +15,7 @@ package aerys.minko.render.effect.glow
 		
 		public function GlowShader(renderTarget	: RenderTarget	= null,
 								   priority		: Number		= .0,
-								   blur			: Number		= 0.165,
+								   blur			: Number		= 0.65,
 								   color		: uint			= 0xffffffff)
 		{
 			super(renderTarget, priority);
@@ -33,15 +33,15 @@ package aerys.minko.render.effect.glow
 		{
 			super.initializeSettings(settings);
 			
+			settings.depthWriteEnabled	= false;
 			settings.triangleCulling	= TriangleCulling.FRONT;
-			settings.blending			= Blending.ALPHA;
+			settings.blending			= Blending.ADDITIVE;
 		}
 
 		override protected function getVertexPosition() : SFloat
 		{
 			var pos		: SFloat	= localToView(vertexXYZ);
-			var normal	: SFloat	= vertexNormal;
-			pos						= add(pos, multiply(normal, float3(_blur, _blur, 0)));
+			pos						= add(pos, multiply(vertexNormal, float3(_blur, _blur, 0.)));
 			
 			return multiply4x4(pos, projectionMatrix);
 		}
