@@ -34,7 +34,7 @@ package aerys.minko.scene.data.lightScattering
 		public function set color(value : int) : void
 		{
 			_color = value;
-			changed.execute(this, 'color');
+			propertyChanged.execute(this, 'color');
 		}
 		
 		public function get decay() : Number
@@ -44,7 +44,7 @@ package aerys.minko.scene.data.lightScattering
 		public function set decay(value : Number) : void
 		{
 			_decay = value;
-			changed.execute(this, 'decay');
+			propertyChanged.execute(this, 'decay');
 		}
 		
 		public function get exposure() : Number
@@ -54,7 +54,7 @@ package aerys.minko.scene.data.lightScattering
 		public function set exposure(value : Number) : void
 		{
 			_exposure = value;
-			changed.execute(this, 'exposure');
+			propertyChanged.execute(this, 'exposure');
 		}
 		
 		public function get weight() : Number
@@ -64,7 +64,7 @@ package aerys.minko.scene.data.lightScattering
 		public function set weight(value : Number) : void
 		{
 			_weight = value;
-			changed.execute(this, 'weight');
+			propertyChanged.execute(this, 'weight');
 		}
 		
 		public function get density() : Number
@@ -74,7 +74,7 @@ package aerys.minko.scene.data.lightScattering
 		public function set density(value : Number) : void
 		{
 			_density = value;
-			changed.execute(this, 'density');
+			propertyChanged.execute(this, 'density');
 		}
 		
 		public function LightScatteringProvider()
