@@ -38,15 +38,15 @@ package aerys.minko.render.effect.lightScattering
 
 		override protected function getPixelColor() : SFloat
 		{
-			var isLightSource	: Boolean	= meshBindings.getConstant(
+			var isLightSource	: Boolean	= meshBindings.getProperty(
 				LightScatteringProperties.IS_LIGHT_SOURCE, false
 			);
 			
-			/*var isSky			: Boolean	= meshBindings.getConstant(
+			/*var isSky			: Boolean	= meshBindings.getProperty(
 				LightScattering.IS_SKY, false
 			);*/
 			
-			var isTransparent	: Boolean	= meshBindings.getConstant(
+			var isTransparent	: Boolean	= meshBindings.getProperty(
 				LightScatteringProperties.IS_TRANSPARENT, false
 			);
 			

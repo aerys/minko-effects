@@ -24,7 +24,7 @@ package aerys.minko.render.effect.blur
 		{
 			super();
 			
-			setPasses(getBlurPasses(quality, numPasses));
+			setExtraPasses(getBlurPasses(quality, numPasses));
 		}
 		
 		public static function getBlurPasses(quality 		: uint,

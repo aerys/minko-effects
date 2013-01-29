@@ -29,12 +29,12 @@ package aerys.minko.render.effect.lightScattering
 			);
 			
 			var passes : Array	= [new LightScatteringShader(_occlusionMap)];
-			var numRenderingPasses : uint = _renderingEffect.numPasses;
+			var numRenderingPasses : uint = _renderingEffect.numExtraPasses;
 			
 			for (var i : uint; i < numRenderingPasses; ++i)
-				passes.push(_renderingEffect.getPass(i));
+				passes.push(_renderingEffect.getExtraPass(i));
 			
-			_renderingEffect.passesChanged.add(renderingEffectPassesChangedHandler);
+//			_renderingEffect.passesChanged.add(renderingEffectPassesChangedHandler);
 			
 			super(passes);
 		}

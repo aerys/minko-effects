@@ -50,7 +50,7 @@ package aerys.minko.render.effect.hdr
 			
 			passes.push(new HDRShader(ressources));
 			
-			setPasses(passes);
+			setExtraPasses(passes);
 		}
 	}
 }
