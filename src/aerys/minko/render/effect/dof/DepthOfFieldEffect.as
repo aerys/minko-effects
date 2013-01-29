@@ -1,12 +1,13 @@
 package aerys.minko.render.effect.dof
 {
-	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.Effect;
+	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.blur.BlurEffect;
 	import aerys.minko.render.effect.blur.BlurShader;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;
+	import aerys.minko.type.binding.DataBindingsProxy;
 	
 	/**
 	 * The DeptOfFieldEffect is a post-processing effect using a set of gaussian blur
@@ -17,9 +18,10 @@ package aerys.minko.render.effect.dof
 	 */
 	public class DepthOfFieldEffect extends Effect
 	{
-		private var _targetSize	: uint			= 256;
-		private var _depthMap	: RenderTarget	= null;
-		private var _depthPass	: Shader		= null;
+		private var _numBlurPasses	: uint;
+		private var _targetSize		: uint;
+		private var _depthMap		: RenderTarget;
+		private var _depthPass		: Shader;
 		
 		public function get depthPass() : Shader
 		{
@@ -41,6 +43,7 @@ package aerys.minko.render.effect.dof
 		private function initialize(blurQuality : uint, numBlurPasses : uint) : void
 		{
 			_targetSize = blurQuality;
+			_numBlurPasses = numBlurPasses;
 			
 			_depthMap = new RenderTarget(
 				_targetSize,
@@ -52,16 +55,20 @@ package aerys.minko.render.effect.dof
 			
 			_depthPass = new DepthShader(_depthMap, 100);
 			
-			setPasses(initializePasses(numBlurPasses));
+//			setPasses(initializePasses(numBlurPasses));
 		}
 		
-		private function initializePasses(numBlurPasses : uint) : Vector.<Shader>
+		override protected function initializePasses(meshBindings	: DataBindingsProxy,
+													 sceneBindings	: DataBindingsProxy) : Vector.<Shader>
 		{
+			var pesshes 		: Vector.<Shader> 		= super.initializePasses(
+				meshBindings, sceneBindings
+			);
 			var bluredTarget	: RenderTarget		= new RenderTarget(
 				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
 			);
 			var passes 			: Vector.<Shader>	= BlurEffect.getBlurPasses(
-				_targetSize, numBlurPasses, 1, null, bluredTarget, 2
+				_targetSize, _numBlurPasses, 1, null, bluredTarget, 2
 			);
 			
 			passes.push(new DepthOfFieldShader(
