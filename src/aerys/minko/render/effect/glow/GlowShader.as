@@ -1,5 +1,6 @@
 package aerys.minko.render.effect.glow
 {
+	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.shader.SFloat;
 	import aerys.minko.render.shader.Shader;
 	import aerys.minko.render.shader.ShaderSettings;
@@ -9,40 +10,50 @@ package aerys.minko.render.effect.glow
 
 	public final class GlowShader extends Shader
 	{
-		private var _color	: Vector4	= null;
-		private var _blur	: Number	= 0.;
+		private var _color			: Vector4;
+		private var _blur			: Number;
 		
-		public function GlowShader(blur		: Number	= 0.165,
-								   red		: Number	= 1.,
-								   green	: Number	= 1.,
-								   blue		: Number	= 1.,
-								   alpha	: Number	= 1.)
+		public function GlowShader(renderTarget	: RenderTarget	= null,
+								   priority		: Number		= .0,
+								   blur			: Number		= 0.65,
+								   color		: uint			= 0xffffffff)
 		{
-			_blur = blur;
-			_color = new Vector4(red, green, blue, alpha);
+			super(renderTarget, priority);
+			
+			_blur			= blur;
+			_color			= new Vector4(
+				Number((color >> 24) & 0xff)	/ 255.0,
+				Number((color >> 16) & 0xff)	/ 255.0,
+				Number((color >> 8) & 0xff)		/ 255.0,
+				Number(color & 0xff)			/ 255.0
+			);
 		}
-		
+
 		override protected function initializeSettings(settings : ShaderSettings) : void
 		{
-			settings.triangleCulling = TriangleCulling.FRONT;
-			settings.blending = Blending.ALPHA;
+			super.initializeSettings(settings); 
+			
+			settings.depthWriteEnabled	= false;
+			settings.triangleCulling	= TriangleCulling.FRONT;
+			settings.blending			= Blending.ADDITIVE;
 		}
-		
+
 		override protected function getVertexPosition() : SFloat
 		{
-			var pos	: SFloat	= localToView(vertexXYZ);
+			var position	: SFloat	= add(vertexXYZ, multiply(vertexNormal, float4(_blur, _blur, _blur, .0)));
 			
-			pos.scaleBy(float3(1. + _blur, 1. + _blur, 1.));
-			
-			return pos.multiply4x4(projectionMatrix);
+			return localToScreen(position);
 		}
 		
 		override protected function getPixelColor() : SFloat
 		{
 			var normal 	: SFloat	= interpolate(vertexNormal);
-			var angle 	: SFloat 	= negate(normal.dotProduct3(worldToLocal(cameraPosition)));
+			var angle 	: SFloat 	= negate(dotProduct3(normal, cameraDirection));
+			var color	: SFloat	= float4(_color.x, _color.y, _color.z, _color.w);
+			var power	: SFloat	= power(subtract(0.8, angle), 12.0);
+			color					= multiply(color, power.xxxx);
 			
-			return multiply(_color, power(subtract(0.8, angle), 12.0));
+			return color;
 		}
 	}
 }
