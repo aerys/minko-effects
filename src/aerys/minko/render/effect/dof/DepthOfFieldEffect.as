@@ -1,13 +1,12 @@
 package aerys.minko.render.effect.dof
 {
+	import aerys.minko.render.DataBindingsProxy;
 	import aerys.minko.render.Effect;
 	import aerys.minko.render.RenderTarget;
 	import aerys.minko.render.effect.blur.BlurEffect;
-	import aerys.minko.render.effect.blur.BlurShader;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;
-	import aerys.minko.type.binding.DataBindingsProxy;
 	
 	/**
 	 * The DeptOfFieldEffect is a post-processing effect using a set of gaussian blur
