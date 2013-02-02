@@ -65,14 +65,17 @@ package aerys.minko.render.effect.blur
 		
 		override protected function getPixelColor() : SFloat
 		{
-			var size : SFloat = _blurSource
+			var size    : SFloat    = _blurSource
 				? float2(_blurSource.width, _blurSource.height)
 				: float2(viewportWidth, viewportHeight);
+            var spread  : SFloat    = sceneBindings.propertyExists('blurSpread')
+                ? sceneBindings.getParameter('blurSpread', 2)
+                : null;
 			
 			if (_direction == DIRECTION_HORIZONTAL)
-				return _blur.linearGaussianBlurX(blurSourceTexture, size);
+				return _blur.linearGaussianBlurX(blurSourceTexture, size, spread ? spread.x : null);
 			else
-				return _blur.linearGaussianBlurY(blurSourceTexture, size);
+				return _blur.linearGaussianBlurY(blurSourceTexture, size, spread ? spread.y : null);
 		}
 	}
 }
