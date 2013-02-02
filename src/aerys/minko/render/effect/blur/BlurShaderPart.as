@@ -23,21 +23,27 @@ package aerys.minko.render.effect.blur
 		}
 		
 		public function linearGaussianBlurX(texture		: SFloat,
-											outputSize	: SFloat) : SFloat
+											outputSize	: SFloat,
+                                            spread      : SFloat    = null) : SFloat
 		{
 			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
 			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
+                var offset : SFloat    = divide(float2(OFFSETS[i], 0), outputSize.xx);
+                
+                if (spread)
+                    offset.scaleBy(spread);
+                
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, add(fragmentCoord, divide(float2(OFFSETS[i], 0), outputSize.xx)))
+					sampleTexture(texture, add(fragmentCoord, offset))
 				));
 				
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, subtract(fragmentCoord, divide(float2(OFFSETS[i], 0), outputSize.xx)))
+					sampleTexture(texture, subtract(fragmentCoord, offset))
 				));
 			}
 			
@@ -45,21 +51,27 @@ package aerys.minko.render.effect.blur
 		}
 		
 		public function linearGaussianBlurY(texture		: SFloat,
-											outputSize	: SFloat) : SFloat
+											outputSize	: SFloat,
+                                            spread      : SFloat    = null) : SFloat
 		{
 			var fragmentCoord 	: SFloat = interpolate(vertexUV.xy);
 			var color 			: SFloat = multiply(sampleTexture(texture, fragmentCoord), WEIGHTS[0]);
 			
 			for (var i : uint = 1; i < 3; ++i)
 			{
+                var offset : SFloat    = divide(float2(0, OFFSETS[i]), outputSize.yy);
+                
+                if (spread)
+                    offset.scaleBy(spread);
+                
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, add(fragmentCoord, divide(float2(0, OFFSETS[i]), outputSize.yy)))
+					sampleTexture(texture, add(fragmentCoord, offset))
 				));
 				
 				color.incrementBy(multiply(
 					WEIGHTS[i],
-					sampleTexture(texture, subtract(fragmentCoord, divide(float2(0, OFFSETS[i]), outputSize.yy)))
+					sampleTexture(texture, subtract(fragmentCoord, offset))
 				));
 			}
 			
