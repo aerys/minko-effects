@@ -2,7 +2,7 @@ package aerys.minko.render.effect.hdr
 {
 	import aerys.minko.render.Effect;
 	import aerys.minko.render.RenderTarget;
-	import aerys.minko.render.shader.effect.blur.BlurEffect;
+	import aerys.minko.render.effect.blur.BlurEffect;
 	import aerys.minko.render.resource.texture.ITextureResource;
 	import aerys.minko.render.resource.texture.TextureResource;
 	import aerys.minko.render.shader.Shader;
