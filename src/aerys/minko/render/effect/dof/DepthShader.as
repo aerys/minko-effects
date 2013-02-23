@@ -22,7 +22,7 @@ package aerys.minko.render.effect.dof
 		{
 			super.initializeSettings(settings);
 			
-			settings.blending = Blending.NORMAL;
+			settings.blending = Blending.OPAQUE;
 		}
 		
 		override protected function getVertexPosition():SFloat
