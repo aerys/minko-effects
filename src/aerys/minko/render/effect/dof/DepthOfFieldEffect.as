@@ -53,21 +53,17 @@ package aerys.minko.render.effect.dof
 			);
 			
 			_depthPass = new DepthShader(_depthMap, 100);
-			
-//			setPasses(initializePasses(numBlurPasses));
 		}
 		
 		override protected function initializePasses(meshBindings	: DataBindingsProxy,
 													 sceneBindings	: DataBindingsProxy) : Vector.<Shader>
 		{
-			var pesshes 		: Vector.<Shader> 		= super.initializePasses(
-				meshBindings, sceneBindings
-			);
+			var passes			: Vector.<Shader>	= super.initializePasses(meshBindings, sceneBindings);
 			var bluredTarget	: RenderTarget		= new RenderTarget(
 				_targetSize, _targetSize, new TextureResource(_targetSize, _targetSize)
 			);
-			var passes 			: Vector.<Shader>	= BlurEffect.getBlurPasses(
-				_targetSize, _numBlurPasses, 1, null, bluredTarget, 2
+			passes									= BlurEffect.getBlurPasses(
+				_targetSize, _numBlurPasses, 1, null, bluredTarget, 2, passes
 			);
 			
 			passes.push(new DepthOfFieldShader(
