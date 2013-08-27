@@ -37,10 +37,10 @@ package aerys.minko.render.effect.hdr
 			var color	: SFloat	= _postProcessing.backBufferPixel;
 			var hdr		: SFloat	= float3(0, 0, 0);
 		
-			for each (var ressource : ITextureResource in _resources)
+			for each (var resource : ITextureResource in _resources)
 			{
 				var texture : SFloat = getTexture(
-					ressource,
+					resource,
 					SamplerFiltering.LINEAR,
 					SamplerMipMapping.LINEAR,
 					SamplerWrapping.CLAMP
