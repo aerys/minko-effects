@@ -25,7 +25,7 @@ package aerys.minko.render.effect.hdr
 									blurAspectRatio 		: Number) : void
 		{
 			var passes 		: Vector.<Shader>			= new <Shader>[];
-			var ressources 	: Vector.<ITextureResource> = new <ITextureResource>[];
+			var resources 	: Vector.<ITextureResource> = new <ITextureResource>[];
 			var target		: RenderTarget				= new RenderTarget(
 				quality, quality, new TextureResource(quality, quality)
 			);
@@ -40,7 +40,7 @@ package aerys.minko.render.effect.hdr
 				target = new RenderTarget(
 					quality, quality, new TextureResource(quality, quality)
 				);
-				ressources.push(target.textureResource);
+				resources.push(target.textureResource);
 				
 				BlurEffect.getBlurPasses(
 					quality, numBlurPassesPerSample, blurAspectRatio, source, target, --priority, passes
@@ -48,7 +48,7 @@ package aerys.minko.render.effect.hdr
 				quality >>= 1;
 			}
 			
-			passes.push(new HDRShader(ressources));
+			passes.push(new HDRShader(resources));
 			
 			setExtraPasses(passes);
 		}
